@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+
+BANNER = <<END
+usage: nidyx [-h | --help] [--version]
+       nidyx <schema> [target] [-j | --json-model]
+
+END
+
+DESC = <<END
+
+nidyx generates plain Objective-C models from JSON Schema. That's pretty much
+it. Oh yeah, it also supports generating with JSONModel support! Pretty rad.
+
+END
+
+options = {}
+
+opts = OptionParser.new do |o|
+  o.banner = BANNER
+  o.on("-j", "--json-model", "Generate with JSONModel support") do |j|
+    options[:json_model] = j
+  end
+
+  o.on("--version", "Show version")
+
+  o.separator DESC
+end
+
+begin
+  opts.parse!
+rescue OptionParser::InvalidOption => e
+  puts e
+end
