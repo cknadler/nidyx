@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
 
 require "optparse"
-
-MAJOR = 0
-MINOR = 0
-PATCH = 1
+require "nidyx/version"
 
 BANNER = <<END
 usage: nidyx [-h | --help] [--version]
@@ -19,6 +16,10 @@ it. Oh yeah, it also supports generating with JSONModel support! Pretty rad.
 
 END
 
+###
+# option parsing
+###
+
 options = {}
 
 opts = OptionParser.new do |o|
@@ -28,7 +29,7 @@ opts = OptionParser.new do |o|
   end
 
   o.on("--version", "Show version") do
-    puts [MAJOR, MINOR, PATCH].join(".")
+    puts Nidyx::VERSION
     exit
   end
 
@@ -39,9 +40,16 @@ begin
   opts.parse!
 rescue OptionParser::InvalidOption => e
   puts e
+  exit 1
 end
 
 if ARGV.empty?
   puts opts
   exit
 end
+
+###
+# generator
+###
+
+
