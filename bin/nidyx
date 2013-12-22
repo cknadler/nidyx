@@ -2,9 +2,13 @@
 
 require "optparse"
 
+MAJOR = 0
+MINOR = 0
+PATCH = 1
+
 BANNER = <<END
 usage: nidyx [-h | --help] [--version]
-       nidyx <schema> [target] [-j | --json-model]
+       nidyx <schema> [target-directory] [-j | --json-model]
 
 END
 
@@ -23,7 +27,10 @@ opts = OptionParser.new do |o|
     options[:json_model] = j
   end
 
-  o.on("--version", "Show version")
+  o.on("--version", "Show version") do
+    puts [MAJOR, MINOR, PATCH].join(".")
+    exit
+  end
 
   o.separator DESC
 end
@@ -32,4 +39,9 @@ begin
   opts.parse!
 rescue OptionParser::InvalidOption => e
   puts e
+end
+
+if ARGV.empty?
+  puts opts
+  exit
 end
