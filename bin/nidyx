@@ -1,11 +1,17 @@
 #!/usr/bin/env ruby
 
 require "optparse"
+require "json"
 require "nidyx/version"
+
+###
+# help text
+###
 
 BANNER = <<END
 usage: nidyx [-h | --help] [--version]
-       nidyx <schema> [target-directory] [-j | --json-model]
+       nidyx <schema> <class-prefix> [output-directory]
+             [-j | --json-model] [-a | --author] [-c | --company]
 
 END
 
@@ -13,6 +19,10 @@ DESC = <<END
 
 nidyx generates plain Objective-C models from JSON Schema. That's pretty much
 it. Oh yeah, it also supports generating with JSONModel support! Pretty rad.
+
+example:
+
+  $ nidyx example.json.schema ClassPrefix /path/to/output/directory
 
 END
 
@@ -24,8 +34,17 @@ options = {}
 
 opts = OptionParser.new do |o|
   o.banner = BANNER
-  o.on("-j", "--json-model", "Generate with JSONModel support") do |j|
+
+  o.on("-j", "--json-model=", "Generate with JSONModel support") do |j|
     options[:json_model] = j
+  end
+
+  o.on("-a", "--author=", "Author's name") do |a|
+    options[:author] = a
+  end
+
+  o.on("-c", "--company=", "Company's name") do |c|
+    options[:company] = c
   end
 
   o.on("--version", "Show version") do
@@ -43,7 +62,8 @@ rescue OptionParser::InvalidOption => e
   exit 1
 end
 
-if ARGV.empty?
+if ARGV.size < 2
+  puts "Too few arguments." unless ARGV.empty?
   puts opts
   exit
 end
@@ -52,4 +72,51 @@ end
 # generator
 ###
 
+# TODO: handle json parse execption here
+# TODO: validate this is legitimate JSON Schema
+SCHEMA = JSON.parse(IO.read(ARGV[0]))
 
+def class_name(key, opts)
+
+end
+
+def top_comment_h
+
+end
+
+def top_comment_m
+
+end
+
+def interface
+
+end
+
+def imports
+
+end
+
+def implementation
+
+end
+
+def gen_h(key, properties, opts)
+  file = ""
+  file += top_comment_h
+  file += imports_h
+  file += interface
+  file += properties
+  file += end_h
+end
+
+def gen_m
+  file = ""
+  file += top_comment_m
+  file += imports_m
+  file += implementation
+end
+
+def generate_model(obj, key, opts)
+end
+
+generate_model(SCHEMA, nil, options)
