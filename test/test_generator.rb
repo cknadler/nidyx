@@ -2,16 +2,12 @@ require "minitest/autorun"
 require "nidyx/generator"
 
 class TestGenerator < Minitest::Test
-  def mock_options
-    {
-      :json_model => false,
-      :author => "Nathan Explosion",
-      :company => "Dethklok"
-    }
+  def setup
+    @gen = Nidyx::Generator.new("Dethklok", nil, {})
   end
 
-  def setup
-    @gen = Nidyx::Generator.new
+  def test_generator
+    skip
   end
 end
 

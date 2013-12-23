@@ -2,7 +2,9 @@
 
 require "optparse"
 require "json"
+require "nidyx"
 require "nidyx/version"
+require "nidyx/generator"
 
 ###
 # help text
@@ -39,15 +41,15 @@ opts = OptionParser.new do |o|
     options[:json_model] = j
   end
 
-  o.on("-a", "--author=", "Author's name") do |a|
+  o.on("-a", "--author NAME", "Author's name") do |a|
     options[:author] = a
   end
 
-  o.on("-c", "--company=", "Company's name") do |c|
+  o.on("-c", "--company COMPANY", "Company's name") do |c|
     options[:company] = c
   end
 
-  o.on("-p", "--project=", "Project's name") do |p|
+  o.on("-p", "--project PROJECT", "Project's name") do |p|
     options[:project] = p
   end
 
@@ -76,6 +78,13 @@ end
 # generator
 ###
 
-# TODO: handle json parse execption here
-# TODO: validate this is legitimate JSON Schema
-SCHEMA = JSON.parse(IO.read(ARGV[0]))
+begin
+  # TODO: validate this is legitimate JSON Schema
+  schema = JSON.parse(IO.read(ARGV[0]))
+rescue JSON::JSONError
+  puts "Invalid JSON read from #{ARGV[0]}"
+  exit 1
+end
+
+gen = Nidyx::Generator.new(ARGV[1], ARGV[2], options)
+gen.spawn(schema)
