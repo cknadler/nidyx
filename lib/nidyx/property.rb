@@ -12,6 +12,10 @@ module Nidyx
         "string" => "(strong, nonatomic) NSString* "
       }
 
+    # @param type [String] the property's type
+    # @param name [String] property name
+    # @param class_name [String] class name, only for object properties
+    # @param desc [String] optional description
     def initialize(type, name, class_name, desc)
       @type = type
       @name = name
