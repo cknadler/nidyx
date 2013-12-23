@@ -14,6 +14,9 @@ spec = Gem::Specification.new do |s|
   s.description = "JSON Schema -> Objective-C model generator"
   s.license     = "MIT"
 
+  s.add_development_dependency "guard"
+  s.add_development_dependency "guard-minitest"
+
   s.bindir           = "bin"
   s.require_paths    = ["lib"]
   s.executables      = ["nidyx"]
