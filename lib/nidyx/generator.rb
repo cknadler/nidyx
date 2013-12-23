@@ -1,7 +1,11 @@
+require "nidyx/common"
+
+include Nidyx::Common
+
 module Nidyx
   class Generator
     attr_reader :author, :company, :project, :json_model, :output_directory,
-      :class_prefix, :schema
+      :class_prefix, :schema, :classes
 
     def initialize(class_prefix, output_directory, options)
       @class_prefix = class_prefix
@@ -10,14 +14,17 @@ module Nidyx
       @company = options[:company]
       @project = options[:project]
       @json_model = options[:json_model]
+      @classes = []
     end
 
     def spawn(schema)
+      @schema = schema
       puts schema
     end
 
-    def class_name(prefix, key)
-      key.nil? ? "#{prefix}Model" : "#{prefix + key}Model"
+    def spawn_h
+
     end
+
   end
 end
