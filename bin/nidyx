@@ -11,20 +11,32 @@ require "nidyx/generator"
 ###
 
 BANNER = <<END
-usage: nidyx [-h | --help] [--version]
-       nidyx <schema> <class-prefix> [output-directory] [-j | --json-model]
-             [-a | --author] [-c | --company] [-p | --project]
+usage: nidyx [-h] [--version]
+       nidyx <schema> <class-prefix> [output-directory]
+             [-j] [-a author] [-c company] [-p project]
 
 END
 
 DESC = <<END
 
-nidyx generates plain Objective-C models from JSON Schema. That's pretty much
-it. Oh yeah, it also supports generating with JSONModel support! Pretty rad.
+Nidyx generates plain Objective-C models from JSON Schema. That's pretty much
+it. Oh yeah, Nidyx can also generate models with JSONModel support!
 
-example:
+Examples:
 
-  $ nidyx example.json.schema ClassPrefix /path/to/output/directory
+  Bare minimum. Given a schema and a class prefix, generate models in the
+  current directory:
+
+    $ nidyx example.json.schema ClassPrefix
+
+  Specify an ouput directory:
+
+    $ nidyx example.json.schema ClassPrefix /path/to/output/directory
+
+  Generate models with JSONModel support and all optional documentation:
+
+    $ nidyx example.json.schema ClassPrefix /path/to/output/directory \\
+      -j -a "Your Name" -c "Company Name" -p "Project Name"
 
 END
 
@@ -41,7 +53,7 @@ opts = OptionParser.new do |o|
     options[:json_model] = j
   end
 
-  o.on("-a", "--author NAME", "Author's name") do |a|
+  o.on("-a", "--author AUTHOR", "Author's name") do |a|
     options[:author] = a
   end
 
@@ -53,7 +65,12 @@ opts = OptionParser.new do |o|
     options[:project] = p
   end
 
-  o.on("--version", "Show version") do
+  o.on("-h", "--help", "Print usage information") do
+    puts o
+    exit
+  end
+
+  o.on("--version", "Print version") do
     puts Nidyx::VERSION
     exit
   end
