@@ -1,13 +1,14 @@
-# nidyx
+# Nidyx
 
-JSON Schema -> Objective-C model generator.
+[JSON Schema][JSONSchema] -> Objective-C model generator.
 
-Nidyx generates Objective-C models from JSON schema. It also supports
+Nidyx generates Objective-C models from JSON Schema. It also supports
 generating with [JSONModel](https://github.com/icanzilb/JSONModel) support.
 
-## usage
+## Usage
 
 ```
+$ nidyx
 usage: nidyx [-h] [--version]
        nidyx <schema> <class-prefix> [output-directory]
              [-j] [-a author] [-c company] [-p project]
@@ -19,8 +20,8 @@ usage: nidyx [-h] [--version]
     -h, --help                       Print usage information
         --version                    Print version
 
-Nidyx generates plain Objective-C models from JSON Schema. That's pretty much
-it. Oh yeah, Nidyx can also generate models with JSONModel support!
+Nidyx generates plain Objective-C models from JSON Schema. It can also generate
+models with JSONModel support.
 
 Examples:
 
@@ -38,4 +39,98 @@ Examples:
     $ nidyx example.json.schema ClassPrefix /path/to/output/directory \
       -j -a "Your Name" -c "Company Name" -p "Project Name"
 
+```
+
+## Features
+
+- [JSON Schema draft 4][JSONSchemaDraft4] support
+
+[JSONSchema]: http://json-schema.org/
+[JSONSchemaDraft4]: http://tools.ietf.org/html/draft-zyp-json-schema-04
+
+## Examples
+
+Note, the following is ommited from the beginning of all examples:
+
+```json
+"$schema": "http://json-schema.org/draft-04/schema#",                                               │
+"type": "object",
+```
+
+Assume that each example is run with the following command unless
+otherwise stated:
+
+```bash
+$ nidyx example.json.schema Example
+```
+
+#### Simple Properties
+
+```json
+{
+  "properties": {
+    "key": {
+      "type": "string"
+    },
+    "value": {
+      "type": "string"
+    }
+  }
+}
+```
+
+```objc
+// ExampleModel.h
+@interface ExampleModel
+@property (strong, nonatomic) NSString* key;
+@property (strong, nonatomic) NSString* value;
+@end
+```
+
+### Nested Properties
+
+```json
+{
+  "properties": {
+    "key": {
+      "type": "string"
+    },
+    "value":  { "$ref": "#/definitions/obj" },
+    "banner": { "$ref" "#/definitions/banner" }
+  },
+  "definitions": {
+    "obj": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "banner": {
+      "type": "string"
+    }
+  }
+}
+```
+
+```objc
+// ExampleModel.h
+#import "ExampleObjModel.h"
+@interface ExampleModel
+@property (strong, nonatomic) NSString* key;
+@proeprty (strong, nonatomic) ExampleObjModel* value;
+@property (strong, nonatomic) NSString* banner;
+@end
+```
+
+```objc
+// ExampleObjModel.h
+@interface ExampleObjModel
+@property (strong, nonatomic) NSString* name;
+@property (assign, nonatomic) NSInteger count;
+@end
 ```
