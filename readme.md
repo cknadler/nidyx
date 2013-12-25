@@ -52,8 +52,8 @@ Examples:
 
 Note, the following is ommited from the beginning of all examples:
 
-```json
-"$schema": "http://json-schema.org/draft-04/schema#",                                               │
+```
+"$schema": "http://json-schema.org/draft-04/schema#",
 "type": "object",
 ```
 
@@ -122,7 +122,7 @@ $ nidyx example.json.schema Example
 #import "ExampleObjModel.h"
 @interface ExampleModel
 @property (strong, nonatomic) NSString* key;
-@proeprty (strong, nonatomic) ExampleObjModel* value;
+@property (strong, nonatomic) ExampleObjModel* value;
 @property (strong, nonatomic) NSString* banner;
 @end
 ```
