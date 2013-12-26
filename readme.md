@@ -56,25 +56,8 @@ it before generation.
 
 ## Examples
 
-Note, the following is ommited from the beginning of all JSON examples:
-
-```
-"$schema": "http://json-schema.org/draft-04/schema#",
-"type": "object",
-```
-
-Assume that each example is run with the following command unless
-otherwise stated:
-
-```bash
-$ nidyx example.json.schema Example
-```
-
 #### Simple Properties
 
-<table>
-<tr>
-<td valign="top">
 ```json
 {
   "properties": {
@@ -87,9 +70,7 @@ $ nidyx example.json.schema Example
   }
 }
 ```
-</td>
 
-<td>
 ```objc
 // ExampleModel.h
 @interface ExampleModel
@@ -97,13 +78,8 @@ $ nidyx example.json.schema Example
 @property (strong, nonatomic) NSString* value;
 @end
 ```
-</td>
-</tr>
-</table>
 
-### Nested Properties
-
-`example.json.schema`:
+#### Nested Properties
 
 ```json
 {
@@ -151,6 +127,22 @@ $ nidyx example.json.schema Example
 @end
 ```
 
+#### Caveats
+
+The following is ommited from the beginning of all JSON examples:
+
+```
+"$schema": "http://json-schema.org/draft-04/schema#",
+"type": "object",
+```
+
+`.m` files are also ommited from all examples.
+
+Assume that each example is run with the following command:
+
+```bash
+$ nidyx example.json.schema Example
+```
+
 [JSONSchema]: http://json-schema.org/
 [JSONSchemaDraft4]: http://tools.ietf.org/html/draft-zyp-json-schema-04
-
