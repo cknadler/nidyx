@@ -16,7 +16,7 @@ module Nidyx
       """
     end
 
-    def imports_block(ext)
+    def imports_block
       block = ""
       self.imports.each { |i| block += "#import \"#{i}.h\"\n" }
       block

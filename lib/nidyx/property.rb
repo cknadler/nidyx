@@ -2,16 +2,6 @@ module Nidyx
   class Property
     attr_reader :type, :name, :class_name, :desc
 
-    DEFINITIONS =
-      {
-        "array" => "(strong, nonatomic) NSArray* ",
-        "boolean" => "(nonatomic, assign) BOOL ",
-        "integer" => "(nonatomic, assign) NSInteger ",
-        "number" => "(nonatomic) double ",
-        "object" => "(strong, nonatomic) ",
-        "string" => "(strong, nonatomic) NSString* "
-      }
-
     # @param type [String] the property's type
     # @param name [String] property name
     # @param class_name [String] class name, only for object properties
@@ -32,6 +22,16 @@ module Nidyx
     end
 
     private
+
+    DEFINITIONS =
+      {
+        "array" => "(strong, nonatomic) NSArray* ",
+        "boolean" => "(assign, nonatomic) BOOL ",
+        "integer" => "(assign, nonatomic) NSInteger ",
+        "number" => "(nonatomic) double ",
+        "object" => "(strong, nonatomic) ",
+        "string" => "(strong, nonatomic) NSString* "
+      }
 
     def property
       base = "@property " + DEFINITIONS[self.type]

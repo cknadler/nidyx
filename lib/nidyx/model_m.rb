@@ -1,7 +1,18 @@
 module Nidyx
   class ModelM < ModelBase
+
+    EXTENSION = ".m"
+
+    def initialize(name, options)
+      self.name = name
+      self.file_name = name + EXTENSION
+      self.author = options[:author]
+      self.company = options[:company]
+      self.project = options[:project]
+    end
+
     def to_s
-      super.header + super.imports_block + implementation
+      self.header + self.imports_block + implementation
     end
 
     private
@@ -9,7 +20,7 @@ module Nidyx
     def implementation
       """
 
-      @implementation #{super.name}
+      @implementation #{self.name}
 
       @end
       """

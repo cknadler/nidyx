@@ -15,6 +15,6 @@ class TestProperty < Minitest::Test
   def test_property_description
     prop = Nidyx::Property.new("integer", "bInt", nil, "description")
     assert_equal(prop.to_s, "// description\n" +
-      "@property (nonatomic, assign) NSInteger bInt")
+      "@property (assign, nonatomic) NSInteger bInt")
   end
 end

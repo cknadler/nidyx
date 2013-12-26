@@ -1,9 +1,22 @@
+require "nidyx/model_base"
+
 module Nidyx
   class ModelH < ModelBase
     attr_accessor :properties, :json_model
 
+    EXTENSION = ".h"
+
+    def initialize(name, options)
+      self.name = name
+      self.file_name = name + EXTENSION
+      self.author = options[:author]
+      self.company = options[:company]
+      self.project = options[:project]
+      self.json_model = options[:json_model]
+    end
+
     def to_s
-      super.header + super.imports_block + interface + properties_block
+      self.header + self.imports_block + interface + properties_block
     end
 
     private
@@ -11,7 +24,7 @@ module Nidyx
     def interface
       """
 
-      @interface #{super.name}#{": JSONModel" if self.json_model}
+      @interface #{self.name}#{": JSONModel" if self.json_model}
 
       """
     end
