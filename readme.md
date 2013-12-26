@@ -129,16 +129,16 @@ it before generation.
 
 #### Caveats
 
-The following is ommited from the beginning of all JSON examples:
+* The following is ommited from the beginning of all JSON examples:
 
 ```
 "$schema": "http://json-schema.org/draft-04/schema#",
 "type": "object",
 ```
 
-`.m` files are also ommited from all examples.
+* `.m` files are also ommited from all examples
 
-Assume that each example is run with the following command:
+* Assume that each example is run with the following command:
 
 ```bash
 $ nidyx example.json.schema Example
