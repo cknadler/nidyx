@@ -51,9 +51,8 @@ supported intentionally.
 
 __Automatic minification:__
 
-I tend to comment my JSON Schema files heavily and minify before using them for
-validation. Nidyx will automatically minify (strip out comments, etc) before
-generation.
+Nidyx will automatically minify (strip out comments, etc) the schema passed to
+it before generation.
 
 ## Examples
 
