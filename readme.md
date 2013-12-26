@@ -44,10 +44,16 @@ Generate models with JSONModel support and all optional documentation:
 
 ## Features
 
-- [JSON Schema draft 4][JSONSchemaDraft4] support
+__[JSON Schema draft 4][JSONSchemaDraft4] support:__
 
-[JSONSchema]: http://json-schema.org/
-[JSONSchemaDraft4]: http://tools.ietf.org/html/draft-zyp-json-schema-04
+Nidyx exclusively supports JSON Schema draft 4. All previous drafts are not
+supported intentionally.
+
+__Automatic minification:__
+
+I tend to comment my JSON Schema files heavily and minify before using them for
+validation. Nidyx will automatically minify (strip out comments, etc) before
+generation.
 
 ## Examples
 
@@ -68,6 +74,7 @@ $ nidyx example.json.schema Example
 #### Simple Properties
 
 ```json
+// example.json.schema
 {
   "properties": {
     "key": {
@@ -91,13 +98,14 @@ $ nidyx example.json.schema Example
 ### Nested Properties
 
 ```json
+// example.json.schema
 {
   "properties": {
     "key": {
       "type": "string"
     },
     "value":  { "$ref": "#/definitions/obj" },
-    "banner": { "$ref" "#/definitions/banner" }
+    "banner": { "$ref": "#/definitions/banner" }
   },
   "definitions": {
     "obj": {
@@ -135,3 +143,7 @@ $ nidyx example.json.schema Example
 @property (assign, nonatomic) NSInteger count;
 @end
 ```
+
+[JSONSchema]: http://json-schema.org/
+[JSONSchemaDraft4]: http://tools.ietf.org/html/draft-zyp-json-schema-04
+
