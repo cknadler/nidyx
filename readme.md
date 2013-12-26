@@ -72,7 +72,7 @@ $ nidyx example.json.schema Example
 
 #### Simple Properties
 
-```json
+```js
 // example.json.schema
 {
   "properties": {
@@ -96,7 +96,7 @@ $ nidyx example.json.schema Example
 
 ### Nested Properties
 
-```json
+```js
 // example.json.schema
 {
   "properties": {
