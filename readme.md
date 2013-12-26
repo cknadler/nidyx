@@ -1,6 +1,6 @@
 # Nidyx
 
-[JSON Schema][JSONSchema] -> Objective-C model generator.
+[JSON Schema][JSONSchema] &#8594; Objective-C model generator.
 
 Nidyx generates Objective-C models from JSON Schema. It also supports
 generating with [JSONModel](https://github.com/icanzilb/JSONModel) support.
