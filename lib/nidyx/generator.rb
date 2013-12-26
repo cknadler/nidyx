@@ -6,53 +6,47 @@ include Nidyx::Common
 
 module Nidyx
   class Generator
-    attr_accessor :class_prefix, :output_directory, :options
+    attr_accessor :class_prefix, :options
 
-    attr_reader :models, :schema
-
-    def initialize(class_prefix, output_directory, options)
+    def initialize(class_prefix, options)
       @class_prefix = class_prefix
       @options = options
-      @output_directory = File.absolute_path(output_directory) if output_directory
     end
 
     def spawn(schema)
-      @schema = schema
-      @models = {}
-      generate_model(schema["properties"], nil)
-
-      self.models.each do |name, files|
-        output_file(files[:m].file_name, files[:m])
-      end
+      models = {}
+      generate_model(schema["properties"], nil, schema, models)
+      models
     end
 
     private
 
-    def generate_model(properties, raw_name)
+    # @param properties [Hash] the properties of the model to be generated
+    # @param raw_name [String] the model's unformatted name, optional
+    # @param schema [Hash] the full schema (for definition lookup)
+    # @param models [Hash] a hash containing all of the generated models
+    # (for model lookup)
+    def generate_model(properties, raw_name, schema, models)
       name = class_name(self.class_prefix, raw_name)
-      self.models[name] = {}
-      generate_h(properties, name)
-      generate_m(name)
+      models[name] = {}
+      generate_h(properties, name, schema, models)
+      generate_m(name, models)
     end
 
-    def generate_h(properties, name)
+    def generate_h(properties, name, schema, models)
       model = Nidyx::ModelH.new(name, self.options)
-
-      properties.each do |property|
-
-      end
-
-      self.models[name][:h] = model
+      properties.each { |k, v| generate_property(k, v, model, models) }
+      models[name][:h] = model
     end
 
-    def generate_m(name)
-      model = Nidyx::ModelM.new(name, self.options)
-      self.models[name][:m] = model
+    def generate_property(key, value, model, models)
+
     end
 
-    def output_file(name, file)
-      path = self.output_directory ? File.join(self.output_directory, name) : name
-      File.open(path, "w") { |f| puts file }
+    def generate_m(name, models)
+      models[name][:m] = Nidyx::ModelM.new(name, self.options)
     end
   end
 end
+
+# I have absolutely no idea.

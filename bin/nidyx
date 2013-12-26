@@ -96,6 +96,8 @@ end
 # generator
 ###
 
+# Attempt to parse ARGV[0] as a file containing JSON.
+# If anything fails, bail.
 begin
   # TODO: validate this is legitimate JSON Schema
   schema = JSON.parse(IO.read(ARGV[0]))
@@ -104,5 +106,7 @@ rescue JSON::JSONError
   exit 1
 end
 
-gen = Nidyx::Generator.new(ARGV[1], ARGV[2], options)
-gen.spawn(schema)
+# Run the generator and output the models
+gen = Nidyx::Generator.new(ARGV[1], options)
+models = gen.spawn(schema)
+Nidyx::Output.write(models, ARGV[2])
