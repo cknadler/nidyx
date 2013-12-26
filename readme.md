@@ -56,7 +56,7 @@ it before generation.
 
 ## Examples
 
-Note, the following is ommited from the beginning of all examples:
+Note, the following is ommited from the beginning of all JSON examples:
 
 ```
 "$schema": "http://json-schema.org/draft-04/schema#",
@@ -72,8 +72,10 @@ $ nidyx example.json.schema Example
 
 #### Simple Properties
 
-```js
-// example.json.schema
+<table>
+<tr>
+<td valign="top">
+```json
 {
   "properties": {
     "key": {
@@ -85,7 +87,9 @@ $ nidyx example.json.schema Example
   }
 }
 ```
+</td>
 
+<td>
 ```objc
 // ExampleModel.h
 @interface ExampleModel
@@ -93,11 +97,15 @@ $ nidyx example.json.schema Example
 @property (strong, nonatomic) NSString* value;
 @end
 ```
+</td>
+</tr>
+</table>
 
 ### Nested Properties
 
-```js
-// example.json.schema
+`example.json.schema`:
+
+```json
 {
   "properties": {
     "key": {
