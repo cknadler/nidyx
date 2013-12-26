@@ -22,21 +22,22 @@ DESC = <<END
 Nidyx generates plain Objective-C models from JSON Schema. It can also generate
 models with JSONModel support.
 
-Examples:
+Examples
+========
 
-  Bare minimum. Given a schema and a class prefix, generate models in the
-  current directory:
+Bare minimum. Given a schema and a class prefix, generate models in the
+current directory:
 
-    $ nidyx example.json.schema ClassPrefix
+  $ nidyx example.json.schema ClassPrefix
 
-  Specify an ouput directory:
+Specify an ouput directory:
 
-    $ nidyx example.json.schema ClassPrefix /path/to/output/directory
+  $ nidyx example.json.schema ClassPrefix /path/to/output/directory
 
-  Generate models with JSONModel support and all optional documentation:
+Generate models with JSONModel support and all optional documentation:
 
-    $ nidyx example.json.schema ClassPrefix /path/to/output/directory \\
-      -j -a "Your Name" -c "Company Name" -p "Project Name"
+  $ nidyx example.json.schema ClassPrefix /path/to/output/directory \\
+    -j -a "Your Name" -c "Company Name" -p "Project Name"
 
 END
 
