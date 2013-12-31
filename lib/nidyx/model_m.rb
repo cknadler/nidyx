@@ -1,14 +1,17 @@
+require "nidyx/common"
+
+include Nidyx::Common
+
 module Nidyx
   class ModelM < ModelBase
 
-    EXTENSION = ".m"
-
     def initialize(name, options)
       self.name = name
-      self.file_name = name + EXTENSION
+      self.file_name = implementation_path(name)
       self.author = options[:author]
       self.company = options[:company]
       self.project = options[:project]
+      self.imports = [header_path(name)]
     end
 
     def to_s

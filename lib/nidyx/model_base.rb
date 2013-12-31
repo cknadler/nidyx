@@ -17,6 +17,7 @@ module Nidyx
     end
 
     def imports_block
+      return nil unless self.imports
       block = ""
       self.imports.each { |i| block += "#import \"#{i}.h\"\n" }
       block

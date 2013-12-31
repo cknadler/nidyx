@@ -21,10 +21,45 @@ class TestGenerator < Minitest::Test
     }
 
     models = @gen.spawn(schema)
-    assert(models != nil)
+
+    ###
+    # root model tests
+    ###
+    model = models["DethklokModel"]
+
+    # header
+    assert(model[:h].name == "DethklokModel")
+    assert(model[:h].file_name == "DethklokModel.h")
+    assert(model[:h].author == nil)
+    assert(model[:h].company == nil)
+    assert(model[:h].project == nil)
+    assert(model[:h].imports == nil)
+
+    # properties
+    props = model[:h].properties
+
+    key = props["key"]
+    assert(key.type == "string")
+    assert(key.name == "key")
+    assert(key.class_name == nil)
+    assert(key.desc == nil)
+
+    value = props["value"]
+    assert(value.type == "string")
+    assert(value.name == "value")
+    assert(value.class_name == nil)
+    assert(value.desc == nil)
+
+    # implementation
+    assert(model[:m].name == "DethklokModel")
+    assert(model[:m].file_name == "DethklokModel.m")
+    assert(model[:m].author == nil)
+    assert(model[:m].company == nil)
+    assert(model[:m].project == nil)
+    assert(model[:m].imports == ["DethklokModel.h"])
   end
 
-  def test_nested_properties
+  def test_deeply_nested_properties
     schema = {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "type" => "object",
@@ -38,8 +73,16 @@ class TestGenerator < Minitest::Test
             "name" => {
               "type" => "string"
             },
-            "count" => {
-              "type" => "integer"
+            "obj" => {
+              "type" => "object",
+              "properties" => {
+                "id" => {
+                  "type" => "string"
+                },
+                "data" => {
+                  "type" => "string"
+                }
+              }
             }
           }
         }

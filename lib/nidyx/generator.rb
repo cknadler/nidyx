@@ -35,7 +35,7 @@ module Nidyx
 
     def generate_h(properties, name, schema, models)
       model = Nidyx::ModelH.new(name, self.options)
-      properties.each { |k, v| generate_property(k, v, model, models) }
+      properties.each { |k, v| generate_property(k, v, model, models) } if properties
       models[name][:h] = model
     end
 
