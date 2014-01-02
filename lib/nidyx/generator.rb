@@ -2,6 +2,7 @@ require "nidyx/common"
 require "nidyx/model_h"
 require "nidyx/model_m"
 require "nidyx/property"
+require "nidyx/pointer"
 
 include Nidyx::Common
 
@@ -40,16 +41,22 @@ module Nidyx
     def generate_h(path, name, schema, models)
       model = Nidyx::ModelH.new(name, self.options)
 
-      properties = object_at_path(schema, path)
+      properties = object_at_path(path, schema)
       properties.each do |k, v|
-        property_path = path + [k]
-        model.properties[k] = generate_property(k, v, property_path, model, models, schema)
+        model.properties[k] = generate_property(k, v, path + [k], model, models, schema)
       end
 
       models[name][:h] = model
     end
 
     def generate_property(name, value, path, model, models, schema)
+      # if property is a reference
+      if value["$ref"]
+        ptr = Nidyx::Pointer.new(value["$ref"])
+        path = ptr.path
+        value = object_at_path(path, schema)
+      end
+
       type = value["type"]
       desc = value["description"]
       class_name = nil
@@ -72,7 +79,7 @@ module Nidyx
       props == nil || props.empty?
     end
 
-    def object_at_path(schema, path)
+    def object_at_path(path, schema)
       obj = schema
       path.each { |p| obj = obj[p] }
       obj
