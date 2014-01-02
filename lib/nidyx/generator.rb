@@ -57,7 +57,6 @@ module Nidyx
       if value[REF_KEY]
         ptr = Nidyx::Pointer.new(value[REF_KEY])
         path = ptr.path
-        binding.pry
         value = object_at_path(path, schema)
       end
 
@@ -67,7 +66,7 @@ module Nidyx
 
       if type == "object"
         class_name = class_name_from_path(self.class_prefix, path)
-        model.imports << header_path(class_name)
+        model.imports << class_name
         generate_model(path, class_name, schema, models) unless models.include?(class_name)
       end
 

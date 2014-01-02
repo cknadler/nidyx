@@ -11,7 +11,7 @@ module Nidyx
       self.author = options[:author]
       self.company = options[:company]
       self.project = options[:project]
-      self.imports = [header_path(name)]
+      self.imports = [name]
     end
 
     def to_s
