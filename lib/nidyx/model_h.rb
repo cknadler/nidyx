@@ -14,6 +14,7 @@ module Nidyx
       self.project = options[:project]
       self.properties = {}
       self.json_model = options[:json_model]
+      self.imports = []
     end
 
     def to_s

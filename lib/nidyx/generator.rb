@@ -20,29 +20,28 @@ module Nidyx
       raise EmptySchemaError if empty_schema?(schema)
 
       models = {}
-      generate_model([], nil, schema, models)
+      generate_model([], class_name(self.class_prefix, nil), schema, models)
       models
     end
 
     private
 
     # @param path [Hash] the path in the schema of the model to be generated
-    # @param raw_name [String] the model's unformatted name, optional
+    # @param name [String] the model's name
     # @param schema [Hash] the full schema (for definition lookup)
     # @param models [Hash] a hash containing all of the generated models
     # (for model lookup)
-    def generate_model(path, raw_name, schema, models)
-      name = class_name(self.class_prefix, raw_name)
+    def generate_model(path, name, schema, models)
       models[name] = {}
-      path << "properties"
-      generate_h(path, name, schema, models)
+      generate_h(path + ["properties"], name, schema, models)
       generate_m(name, models)
     end
 
     def generate_h(path, name, schema, models)
       model = Nidyx::ModelH.new(name, self.options)
 
-      object_at_path(schema, path).each do |k, v|
+      properties = object_at_path(schema, path)
+      properties.each do |k, v|
         property_path = path + [k]
         model.properties[k] = generate_property(k, v, property_path, model, models, schema)
       end
@@ -57,6 +56,8 @@ module Nidyx
 
       if type == "object"
         class_name = class_name_from_path(path)
+        model.imports << header_path(class_name)
+        generate_model(path, class_name, schema, models) unless models.include?(class_name)
       end
 
       Nidyx::Property.new(name, type, class_name, desc)
