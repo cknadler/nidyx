@@ -36,35 +36,35 @@ class TestGenerator < Minitest::Test
     model = models["TSTModel"]
 
     # header
-    assert(model[:h].name == "TSTModel")
-    assert(model[:h].file_name == "TSTModel.h")
-    assert(model[:h].author == nil)
-    assert(model[:h].company == nil)
-    assert(model[:h].project == nil)
-    assert(model[:h].imports == nil)
+   assert_equal("TSTModel", model[:h].name)
+   assert_equal("TSTModel.h", model[:h].file_name)
+   assert_equal(nil, model[:h].author)
+   assert_equal(nil, model[:h].company)
+   assert_equal(nil, model[:h].project)
+   assert_equal(nil, model[:h].imports)
 
     # properties
     props = model[:h].properties
 
     key = props["key"]
-    assert(key.name == "key")
-    assert(key.type == "string")
-    assert(key.class_name == nil)
-    assert(key.desc == nil)
+   assert_equal("key", key.name)
+   assert_equal("string", key.type)
+   assert_equal(nil, key.class_name)
+   assert_equal(nil, key.desc)
 
     value = props["value"]
-    assert(value.name == "value")
-    assert(value.type == "string")
-    assert(value.class_name == nil)
-    assert(value.desc == nil)
+   assert_equal("value", value.name)
+   assert_equal("string", value.type)
+   assert_equal(nil, value.class_name)
+   assert_equal(nil, value.desc)
 
     # implementation
-    assert(model[:m].name == "TSTModel")
-    assert(model[:m].file_name == "TSTModel.m")
-    assert(model[:m].author == nil)
-    assert(model[:m].company == nil)
-    assert(model[:m].project == nil)
-    assert(model[:m].imports == ["TSTModel.h"])
+   assert_equal("TSTModel", model[:m].name)
+   assert_equal("TSTModel.m", model[:m].file_name)
+   assert_equal(nil, model[:m].author)
+   assert_equal(nil, model[:m].company)
+   assert_equal(nil, model[:m].project)
+   assert_equal(["TSTModel.h"], model[:m].imports)
   end
 
   def test_deeply_nested_properties
@@ -97,25 +97,25 @@ class TestGenerator < Minitest::Test
     model = models["TSTModel"]
 
     # header
-    assert(model[:h].name == "TSTModel")
-    assert(model[:h].file_name == "TSTModel.h")
+   assert_equal("TSTModel", model[:h].name)
+   assert_equal("TSTModel.h", model[:h].file_name)
 
     # properties
     props = model[:h].properties
 
     key = props["key"]
-    assert(key.name == "key")
-    assert(key.type == "string")
+   assert_equal("key", key.name)
+   assert_equal("string", key.type)
 
     value = props["value"]
-    assert(value.name == "value")
-    assert(value.type == "object")
-    assert_equal("TSTValueModel", value.class_name)
+   assert_equal("value", value.name)
+   assert_equal("object", value.type)
+   assert_equal("TSTValueModel", value.class_name)
 
     # implementation
-    assert(model[:m].name == "TSTModel")
-    assert(model[:m].file_name == "TSTModel.m")
-    assert(model[:m].imports == ["TSTModel.h", "TSTValueModel.h"])
+   assert_equal("TSTModel", model[:m].name)
+   assert_equal("TSTModel.m", model[:m].file_name)
+   assert_equal(["TSTModel.h", "TSTValueModel.h"], model[:m].imports)
 
     ###
     # first nested model
@@ -123,25 +123,25 @@ class TestGenerator < Minitest::Test
     model = models["TSTValueModel"]
 
     # header
-    assert(model[:h].name == "TSTValueModel")
-    assert(model[:h].file_name == "TSTValueModel.h")
+   assert_equal("TSTValueModel", model[:h].name)
+   assert_equal("TSTValueModel.h", model[:h].file_name)
 
     # properties
     props = model[:h].properties
 
     name = props["name"]
-    assert(name.name == "name")
-    assert(name.type == "string")
+   assert_equal("name", name.name)
+   assert_equal("string", name.type)
 
     obj = props["obj"]
-    assert(obj.name == "obj")
-    assert(obj.type == "object")
-    assert(obj.class_name == "TSTValueObjModel")
+   assert_equal("obj", obj.name)
+   assert_equal("object", obj.type)
+   assert_equal("TSTValueObjModel", obj.class_name)
 
     # implementation
-    assert(model[:m].name == "TSTValueModel")
-    assert(model[:m].file_name == "TSTValueModel.m")
-    assert(model[:m].imports == ["TSTValueModel.h", "TSTValueObjModel.h"])
+   assert_equal("TSTValueModel", model[:m].name)
+   assert_equal("TSTValueModel.m", model[:m].file_name)
+   assert_equal(["TSTValueModel.h", "TSTValueObjModel.h"], model[:m].imports)
 
     ###
     # second nested model
@@ -149,24 +149,24 @@ class TestGenerator < Minitest::Test
     model = models["TSTValueObjModel"]
 
     # header
-    assert(model[:h].name == "TSTValueObjModel")
-    assert(model[:h].file_name == "TSTValueObjModel.h")
+   assert_equal("TSTValueObjModel", model[:h].name)
+   assert_equal("TSTValueObjModel.h", model[:h].file_name)
 
     # properties
     props = model[:h].properties
 
     id = props["id"]
-    assert(id.name == "id")
-    assert(id.type == "string")
+   assert_equal("id", id.name)
+   assert_equal("string", id.type)
 
     data = props["data"]
-    assert(data.name == "data")
-    assert(data.type == "string")
+   assert_equal("data", data.name)
+   assert_equal("string", data.type)
 
     # implementation
-    assert(model[:m].name == "TSTValueObjModel")
-    assert(model[:m].file_name == "TSTValueObjModel.m")
-    assert(model[:m].imports == ["TSTValueObjModel.h"])
+   assert_equal("TSTValueObjModel", model[:m].name)
+   assert_equal("TSTValueObjModel.m", model[:m].file_name)
+   assert_equal(["TSTValueObjModel.h"], model[:m].imports)
   end
 
   def test_definitions
