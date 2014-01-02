@@ -1,6 +1,6 @@
 module Nidyx
   class Property
-    attr_reader :type, :name, :class_name, :desc
+    attr_reader :name, :type, :class_name, :desc
 
     # @param name [String] property name
     # @param type [String] the property's type

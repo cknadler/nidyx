@@ -12,6 +12,7 @@ module Nidyx
       self.author = options[:author]
       self.company = options[:company]
       self.project = options[:project]
+      self.properties = {}
       self.json_model = options[:json_model]
     end
 
