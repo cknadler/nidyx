@@ -25,5 +25,11 @@ module Nidyx
     def implementation_path(name)
       name + ".m"
     end
+
+    def object_at_path(path, schema)
+      obj = schema
+      path.each { |p| obj = obj[p] }
+      obj
+    end
   end
 end

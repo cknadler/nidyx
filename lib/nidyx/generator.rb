@@ -3,6 +3,7 @@ require "nidyx/model_h"
 require "nidyx/model_m"
 require "nidyx/property"
 require "nidyx/pointer"
+require "pry"
 
 include Nidyx::Common
 
@@ -11,6 +12,8 @@ class EmptySchemaError < StandardError; end
 module Nidyx
   class Generator
     attr_accessor :class_prefix, :options
+
+    REF_KEY = "$ref"
 
     def initialize(class_prefix, options)
       @class_prefix = class_prefix
@@ -51,9 +54,10 @@ module Nidyx
 
     def generate_property(name, value, path, model, models, schema)
       # if property is a reference
-      if value["$ref"]
-        ptr = Nidyx::Pointer.new(value["$ref"])
+      if value[REF_KEY]
+        ptr = Nidyx::Pointer.new(value[REF_KEY])
         path = ptr.path
+        binding.pry
         value = object_at_path(path, schema)
       end
 
@@ -77,12 +81,6 @@ module Nidyx
     def empty_schema?(schema)
       props = schema["properties"]
       props == nil || props.empty?
-    end
-
-    def object_at_path(path, schema)
-      obj = schema
-      path.each { |p| obj = obj[p] }
-      obj
     end
   end
 end

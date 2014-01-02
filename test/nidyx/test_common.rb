@@ -30,4 +30,36 @@ class TestCommon < Minitest::Test
     name = "DKModel"
     assert_equal(name + ".m", implementation_path(name))
   end
+
+  def test_object_at_path
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value" =>  { "$ref" => "#/definitions/obj" }
+      },
+      "definitions" => {
+        "obj" => {
+          "type" => "object",
+          "properties" => {
+            "name" => {
+              "type" => "string"
+            },
+            "count" => {
+              "type" => "integer"
+            }
+          }
+        }
+      }
+    }
+
+    obj = object_at_path(["properties", "value"], schema)
+    assert_equal("#/definitions/obj", obj["$ref"])
+
+    obj = object_at_path(["definitions", "obj"], schema)
+    assert_equal("object", obj["type"])
+    assert_equal("string", obj["properties"]["name"]["type"])
+
+    obj = object_at_path(["definitions", "obj", "properties", "count"], schema)
+    assert_equal("integer", obj["type"])
+  end
 end
