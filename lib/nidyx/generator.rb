@@ -62,7 +62,7 @@ module Nidyx
       class_name = nil
 
       if type == "object"
-        class_name = class_name_from_path(path)
+        class_name = class_name_from_path(self.class_prefix, path)
         model.imports << header_path(class_name)
         generate_model(path, class_name, schema, models) unless models.include?(class_name)
       end
@@ -83,12 +83,6 @@ module Nidyx
       obj = schema
       path.each { |p| obj = obj[p] }
       obj
-    end
-
-    def class_name_from_path(path)
-      name = ""
-      path.each { |p| name += p.camelize if p != "properties" }
-      self.class_prefix + name + "Model"
     end
   end
 end

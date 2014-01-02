@@ -2,6 +2,7 @@ module Nidyx
   module Common
 
     CLASS_SUFFIX = "Model"
+    IGNORED_KEYS = "properties", "definitions"
 
     def class_name(prefix, key)
       if key
@@ -9,6 +10,12 @@ module Nidyx
       else
         prefix + CLASS_SUFFIX
       end
+    end
+
+    def class_name_from_path(prefix, path)
+      name = ""
+      path.each { |p| name += p.camelize unless IGNORED_KEYS.include?(p) }
+      prefix + name + CLASS_SUFFIX
     end
 
     def header_path(name)
