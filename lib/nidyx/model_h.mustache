@@ -4,8 +4,10 @@
 @interface {{name}}
 
 {{#properties}}
-{{#desc}}{{desc}}{{/desc}}
-@property {{attributes}} {{type}} {{name}};
+{{#desc}}
+// {{desc}}
+{{/desc}}
+@property {{attributes}} {{type}}{{name}};
 {{/properties}}
 
 @end
