@@ -36,6 +36,24 @@ class TestGenerator < Minitest::Test
     end
   end
 
+  def test_description
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "key" => {
+          "description" => "a description",
+          "type" => "string"
+        }
+      }
+    }
+
+    models = @gen.spawn(schema)
+    model = models["TSTModel"]
+    props = model[:h].properties
+
+    assert_equal("a description", props.shift.desc)
+  end
+
   def test_simple_properties
     schema = {
       "type" => "object",
@@ -46,16 +64,7 @@ class TestGenerator < Minitest::Test
     }
 
     models = @gen.spawn(schema)
-
-    ###
-    # root model
-    ###
     model = validate_model_files(models, "TSTModel", [])
-
-    # header
-    assert_equal(ENV['USER'], model[:h].author)
-    assert_equal(ENV['USER'], model[:h].owner)
-    assert_equal(nil, model[:h].project)
 
     # properties
     props = model[:h].properties
