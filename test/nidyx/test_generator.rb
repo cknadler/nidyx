@@ -62,14 +62,12 @@ class TestGenerator < Minitest::Test
 
     key = props["key"]
     assert_equal("key", key.name)
-    assert_equal("string", key.type)
-    assert_equal(nil, key.class_name)
+    assert_equal("NSString *", key.type)
     assert_equal(nil, key.desc)
 
     value = props["value"]
     assert_equal("value", value.name)
-    assert_equal("string", value.type)
-    assert_equal(nil, value.class_name)
+    assert_equal("NSString *", value.type)
     assert_equal(nil, value.desc)
 
     # implementation
@@ -111,12 +109,11 @@ class TestGenerator < Minitest::Test
 
     key = props["key"]
     assert_equal("key", key.name)
-    assert_equal("string", key.type)
+    assert_equal("NSString *", key.type)
 
     value = props["value"]
     assert_equal("value", value.name)
-    assert_equal("object", value.type)
-    assert_equal("TSTValueModel", value.class_name)
+    assert_equal("TSTValueModel *", value.type)
 
     ###
     # value model
@@ -128,12 +125,11 @@ class TestGenerator < Minitest::Test
 
     name = props["name"]
     assert_equal("name", name.name)
-    assert_equal("string", name.type)
+    assert_equal("NSString *", name.type)
 
     obj = props["obj"]
     assert_equal("obj", obj.name)
-    assert_equal("object", obj.type)
-    assert_equal("TSTValueObjModel", obj.class_name)
+    assert_equal("TSTValueObjModel *", obj.type)
 
     ###
     # value obj model
@@ -145,11 +141,11 @@ class TestGenerator < Minitest::Test
 
     id = props["id"]
     assert_equal("id", id.name)
-    assert_equal("string", id.type)
+    assert_equal("NSString *", id.type)
 
     data = props["data"]
     assert_equal("data", data.name)
-    assert_equal("string", data.type)
+    assert_equal("NSString *", data.type)
   end
 
   def test_definitions
@@ -184,16 +180,15 @@ class TestGenerator < Minitest::Test
 
     key = props["key"]
     assert_equal("key", key.name)
-    assert_equal("string", key.type)
+    assert_equal("NSString *", key.type)
 
     value = props["value"]
     assert_equal("value", value.name)
-    assert_equal("object", value.type)
-    assert_equal("TSTObjModel", value.class_name)
+    assert_equal("TSTObjModel *", value.type)
 
     banner = props["banner"]
     assert_equal("banner", banner.name)
-    assert_equal("string", banner.type)
+    assert_equal("NSString *", banner.type)
 
     ###
     # obj model
@@ -205,11 +200,11 @@ class TestGenerator < Minitest::Test
 
     name = props["name"]
     assert_equal("name", name.name)
-    assert_equal("string", name.type)
+    assert_equal("NSString *", name.type)
 
     count = props["count"]
     assert_equal("count", count.name)
-    assert_equal("integer", count.type)
+    assert_equal("NSInteger ", count.type)
   end
 
   def test_chained_definitions
@@ -249,12 +244,11 @@ class TestGenerator < Minitest::Test
 
     key = props["key"]
     assert_equal("key", key.name)
-    assert_equal("string", key.type)
+    assert_equal("NSString *", key.type)
 
     value = props["value"]
     assert_equal("value", value.name)
-    assert_equal("object", value.type)
-    assert_equal("TSTObj2Model", value.class_name)
+    assert_equal("TSTObj2Model *", value.type)
 
     ###
     # obj2 model
@@ -266,12 +260,11 @@ class TestGenerator < Minitest::Test
 
     key = props["key"]
     assert_equal("key", key.name)
-    assert_equal("string", key.type)
+    assert_equal("NSString *", key.type)
 
     value = props["value"]
     assert_equal("value", value.name)
-    assert_equal("object", value.type)
-    assert_equal("TSTObj3Model", value.class_name)
+    assert_equal("TSTObj3Model *", value.type)
 
     ###
     # obj3 model
@@ -283,11 +276,11 @@ class TestGenerator < Minitest::Test
 
     key = props["key"]
     assert_equal("key", key.name)
-    assert_equal("string", key.type)
+    assert_equal("NSString *", key.type)
 
     value = props["value"]
     assert_equal("value", value.name)
-    assert_equal("string", value.type)
+    assert_equal("NSString *", value.type)
   end
 end
 
