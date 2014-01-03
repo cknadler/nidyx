@@ -59,17 +59,15 @@ it before generation.
 #### Simple Properties
 
 ```json
-{
+{ // example.json.schema
   "properties": {
-    "key": {
-      "type": "string"
-    },
-    "value": {
-      "type": "string"
-    }
+    "key": { "type": "string" },
+    "value": { "type": "string" }
   }
 }
 ```
+
+`$ nidyx example.json.schema Example`:
 
 ```objc
 // ExampleModel.h
@@ -79,49 +77,52 @@ it before generation.
 @end
 ```
 
-#### Nested Properties
+#### Refs and Nested Properties
 
 ```json
 {
   "properties": {
-    "key": {
-      "type": "string"
+    "id": {
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "hash": { "type": "string" },
+      }
     },
     "value":  { "$ref": "#/definitions/obj" },
-    "banner": { "$ref": "#/definitions/banner" }
   },
   "definitions": {
     "obj": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "count": {
-          "type": "integer"
-        }
+        "banner": { "$ref": "#/definitions/banner" },
+        "name": { "type": "string" },
+        "count": { "type": "integer" }
       }
     },
-    "banner": {
-      "type": "string"
-    }
+    "banner": { "type": "string" }
   }
 }
 ```
 
 ```objc
 // ExampleModel.h
+#import "ExampleIdModel.h"
 #import "ExampleObjModel.h"
 @interface ExampleModel
-@property (strong, nonatomic) NSString* key;
+@property (strong, nonatomic) ExampleIdModel* id;
 @property (strong, nonatomic) ExampleObjModel* value;
-@property (strong, nonatomic) NSString* banner;
 @end
-```
 
-```objc
+// ExampleIdModel.h
+@interface ExampleIdModel
+@property (strong, nonatomic) NSString* key;
+@property (strong, nonatomic) NSString* hash;
+@end
+
 // ExampleObjModel.h
 @interface ExampleObjModel
+@property (strong, nonatomic) NSString* banner;
 @property (strong, nonatomic) NSString* name;
 @property (assign, nonatomic) NSInteger count;
 @end
@@ -137,12 +138,6 @@ it before generation.
 ```
 
 * `.m` files are also ommited from all examples
-
-* Assume that each example is run with the following command:
-
-```bash
-$ nidyx example.json.schema Example
-```
 
 ## License
 
