@@ -1,6 +1,19 @@
 module Nidyx
   class Property
-    attr_reader :name, :type, :class_name, :desc
+    attr_reader :name, :attributes, :type, :class_name, :desc
+
+    TYPES = {
+
+    }
+
+    DEFINITIONS = {
+      "array" => "(strong, nonatomic) NSArray *",
+      "boolean" => "(assign, nonatomic) BOOL ",
+      "integer" => "(assign, nonatomic) NSInteger ",
+      "number" => "(nonatomic) double ",
+      "object" => "(strong, nonatomic) ",
+      "string" => "(strong, nonatomic) NSString *"
+    }
 
     # @param name [String] property name
     # @param type [String] the property's type
@@ -11,35 +24,6 @@ module Nidyx
       @type = type
       @class_name = class_name
       @desc = desc
-    end
-
-    def to_s
-      if self.desc
-        "// " + self.desc + "\n" + property_string
-      else
-        property_string
-      end
-    end
-
-    private
-
-    DEFINITIONS =
-      {
-        "array" => "(strong, nonatomic) NSArray* ",
-        "boolean" => "(assign, nonatomic) BOOL ",
-        "integer" => "(assign, nonatomic) NSInteger ",
-        "number" => "(nonatomic) double ",
-        "object" => "(strong, nonatomic) ",
-        "string" => "(strong, nonatomic) NSString* "
-      }
-
-    def property_string
-      base = "@property " + DEFINITIONS[self.type]
-      if self.type == "object"
-        base + self.class_name + "* " + self.name
-      else
-        base + self.name
-      end
     end
   end
 end

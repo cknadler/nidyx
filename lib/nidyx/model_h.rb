@@ -1,4 +1,7 @@
 require "nidyx/model_base"
+require "nidyx/common"
+
+include Nidyx::Common
 
 module Nidyx
   class ModelH < ModelBase
@@ -8,7 +11,7 @@ module Nidyx
 
     def initialize(name, options)
       self.name = name
-      self.file_name = name + EXTENSION
+      self.file_name = header_name(name)
       self.author = options[:author]
       self.company = options[:company]
       self.project = options[:project]

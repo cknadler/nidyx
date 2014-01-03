@@ -13,20 +13,5 @@ module Nidyx
       self.project = options[:project]
       self.imports = [name]
     end
-
-    def to_s
-      self.header + self.imports_block + implementation
-    end
-
-    private
-
-    def implementation
-      """
-
-      @implementation #{self.name}
-
-      @end
-      """
-    end
   end
 end
