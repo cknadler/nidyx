@@ -14,7 +14,7 @@ spec = Gem::Specification.new do |s|
   s.description = "JSON Schema -> Objective-C model generator"
   s.license     = "MIT"
 
-  s.add_dependency "liquid", "~> 2.6.0"
+  s.add_dependency "mustache", "~> 0.99.5"
 
   s.add_development_dependency "guard"
   s.add_development_dependency "ruby_gntp"
