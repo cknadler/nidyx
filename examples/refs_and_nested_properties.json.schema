@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "hash": { "type": "string" }
+      }
+    },
+    "value":  { "$ref": "#/definitions/obj" }
+  },
+  "definitions": {
+    "obj": {
+      "type": "object",
+      "properties": {
+        "banner": { "$ref": "#/definitions/banner" },
+        "name": { "type": "string" },
+        "count": { "type": "integer" }
+      }
+    },
+    "banner": { "type": "string" }
+  }
+}

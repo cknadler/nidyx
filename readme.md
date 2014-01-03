@@ -56,18 +56,22 @@ it before generation.
 
 ## Examples
 
+Examples are run with the following unless otherwise specified:
+
+```bash
+$ nidyx example.json.schema Example
+```
+
 #### Simple Properties
 
 ```json
-{ // example.json.schema
+{
   "properties": {
     "key": { "type": "string" },
     "value": { "type": "string" }
   }
 }
 ```
-
-`$ nidyx example.json.schema Example`:
 
 ```objc
 // ExampleModel.h
@@ -86,10 +90,10 @@ it before generation.
       "type": "object",
       "properties": {
         "key": { "type": "string" },
-        "hash": { "type": "string" },
+        "hash": { "type": "string" }
       }
     },
-    "value":  { "$ref": "#/definitions/obj" },
+    "value":  { "$ref": "#/definitions/obj" }
   },
   "definitions": {
     "obj": {
