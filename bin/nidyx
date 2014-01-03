@@ -5,6 +5,7 @@ require "json"
 require "nidyx"
 require "nidyx/version"
 require "nidyx/generator"
+require "nidyx/output"
 
 ###
 # help text
@@ -83,6 +84,7 @@ begin
   opts.parse!
 rescue OptionParser::InvalidOption => e
   puts e
+  puts opts
   exit 1
 end
 
@@ -96,8 +98,7 @@ end
 # generator
 ###
 
-# Attempt to parse ARGV[0] as a file containing JSON.
-# If anything fails, bail.
+# Attempt to parse ARGV[0] as a file containing JSON. If anything fails, bail.
 begin
   # TODO: validate this is legitimate JSON Schema
   schema = JSON.parse(IO.read(ARGV[0]))
@@ -110,8 +111,4 @@ end
 gen = Nidyx::Generator.new(ARGV[1], options)
 models = gen.spawn(schema)
 
-# Output the models
-models.each do |name, files|
-  puts files[:h].render
-  puts files[:m].render
-end
+Nidyx::Output.write(models, ARGV[2])
