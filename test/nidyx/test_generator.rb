@@ -200,5 +200,31 @@ class TestGenerator < Minitest::Test
     assert_equal("count", count.name)
     assert_equal("NSInteger ", count.type)
   end
+
+  def test_unsigned_integer
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value" => {
+          "type" => "integer",
+          "minimum" => 0
+        },
+        "larger" => {
+          "type" => "integer",
+          "minimum" => 100
+        }
+      }
+    }
+
+    models = @gen.spawn(schema)
+    model = models["TSTModel"]
+    props = model[:h].properties
+
+    value = props.shift
+    assert_equal("NSUInteger ", value.type)
+
+    larger = props.shift
+    assert_equal("NSUInteger ", larger.type)
+  end
 end
 

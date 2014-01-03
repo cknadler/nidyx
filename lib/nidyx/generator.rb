@@ -13,8 +13,6 @@ module Nidyx
   class Generator
     attr_accessor :class_prefix, :options
 
-    REF_KEY = "$ref"
-
     def initialize(class_prefix, options)
       @class_prefix = class_prefix
       @options = options
@@ -29,6 +27,8 @@ module Nidyx
     end
 
     private
+
+    REF_KEY = "$ref"
 
     # @param path [Hash] the path in the schema of the model to be generated
     # @param name [String] the model's name
@@ -53,23 +53,22 @@ module Nidyx
     end
 
     def generate_property(name, value, path, model, models, schema)
+      class_name = nil
+
       # if property is a reference
       if value[REF_KEY]
         path = Nidyx::Pointer.new(value[REF_KEY]).path
         value = object_at_path(path, schema)
       end
 
-      type = value["type"]
-      desc = value["description"]
-      class_name = nil
-
-      if type == "object"
+      # if property is an object
+      if value["type"] == "object"
         class_name = class_name_from_path(self.class_prefix, path)
         model.imports << class_name
         generate_model(path, class_name, schema, models) unless models.include?(class_name)
       end
 
-      Nidyx::Property.new(name, type, class_name, desc)
+      Nidyx::Property.new(name, class_name, value)
     end
 
     def generate_m(name, models)
