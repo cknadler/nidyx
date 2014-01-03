@@ -19,5 +19,9 @@ module Nidyx
     def created_year
       Time.now.year
     end
+
+    def has_imports?
+      !imports.empty?
+    end
   end
 end
