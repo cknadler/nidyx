@@ -156,15 +156,13 @@ class TestGenerator < Minitest::Test
     schema = {
       "type" => "object",
       "properties" => {
-        "key" => { "type" => "string" },
         "value" =>  { "$ref" => "#/definitions/obj" },
-        "banner" => { "$ref" => "#/definitions/banner" }
       },
       "definitions" => {
         "obj" => {
           "type" => "object",
           "properties" => {
-            "name" => { "type" => "string" },
+            "banner" => { "$ref" => "#/definitions/banner" },
             "count" => { "type" => "integer" }
           }
         },
@@ -182,17 +180,9 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    key = props.shift
-    assert_equal("key", key.name)
-    assert_equal("NSString *", key.type)
-
     value = props.shift
     assert_equal("value", value.name)
     assert_equal("TSTObjModel *", value.type)
-
-    banner = props.shift
-    assert_equal("banner", banner.name)
-    assert_equal("NSString *", banner.type)
 
     ###
     # obj model
@@ -202,89 +192,13 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    name = props.shift
-    assert_equal("name", name.name)
-    assert_equal("NSString *", name.type)
+    banner = props.shift
+    assert_equal("banner", banner.name)
+    assert_equal("NSString *", banner.type)
 
     count = props.shift
     assert_equal("count", count.name)
     assert_equal("NSInteger ", count.type)
-  end
-
-  def test_chained_definitions
-    schema = {
-      "type" => "object",
-      "properties" => {
-        "key" => { "type" => "string" },
-        "value" => { "$ref" => "#/definitions/obj2" }
-      },
-      "definitions" => {
-        "obj2" => {
-          "type" => "object",
-          "properties" => {
-            "key" => { "type" => "string" },
-            "value" => { "$ref" => "#/definitions/obj3" }
-          }
-        },
-        "obj3" => {
-          "type" => "object",
-          "properties" => {
-            "key" => { "type" => "string" },
-            "value" => { "type" => "string" }
-          }
-        }
-      }
-    }
-
-    models = @gen.spawn(schema)
-
-    ###
-    # root model
-    ###
-    model = validate_model_files(models, "TSTModel", ["TSTObj2Model"])
-
-    # properties
-    props = model[:h].properties
-
-    key = props.shift
-    assert_equal("key", key.name)
-    assert_equal("NSString *", key.type)
-
-    value = props.shift
-    assert_equal("value", value.name)
-    assert_equal("TSTObj2Model *", value.type)
-
-    ###
-    # obj2 model
-    ###
-    model = validate_model_files(models, "TSTObj2Model", ["TSTObj3Model"])
-
-    # properties
-    props = model[:h].properties
-
-    key = props.shift
-    assert_equal("key", key.name)
-    assert_equal("NSString *", key.type)
-
-    value = props.shift
-    assert_equal("value", value.name)
-    assert_equal("TSTObj3Model *", value.type)
-
-    ###
-    # obj3 model
-    ###
-    model = validate_model_files(models, "TSTObj3Model", [])
-
-    # properties
-    props = model[:h].properties
-
-    key = props.shift
-    assert_equal("key", key.name)
-    assert_equal("NSString *", key.type)
-
-    value = props.shift
-    assert_equal("value", value.name)
-    assert_equal("NSString *", value.type)
   end
 end
 
