@@ -6,11 +6,8 @@ module Nidyx
   class ModelM < ModelBase
 
     def initialize(name, options)
-      self.name = name
+      super
       self.file_name = implementation_path(name)
-      self.author = options[:author]
-      self.company = options[:company]
-      self.project = options[:project]
       self.imports = [name]
     end
   end

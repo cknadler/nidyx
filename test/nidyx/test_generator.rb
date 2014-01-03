@@ -53,27 +53,22 @@ class TestGenerator < Minitest::Test
     model = validate_model_files(models, "TSTModel", [])
 
     # header
-    assert_equal(nil, model[:h].author)
-    assert_equal(nil, model[:h].company)
+    assert_equal(ENV['USER'], model[:h].author)
+    assert_equal(ENV['USER'], model[:h].owner)
     assert_equal(nil, model[:h].project)
 
     # properties
     props = model[:h].properties
 
-    key = props["key"]
+    key = props.shift
     assert_equal("key", key.name)
     assert_equal("NSString *", key.type)
     assert_equal(nil, key.desc)
 
-    value = props["value"]
+    value = props.shift
     assert_equal("value", value.name)
     assert_equal("NSString *", value.type)
     assert_equal(nil, value.desc)
-
-    # implementation
-    assert_equal(nil, model[:m].author)
-    assert_equal(nil, model[:m].company)
-    assert_equal(nil, model[:m].project)
   end
 
   def test_deeply_nested_properties
@@ -107,11 +102,11 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    key = props["key"]
+    key = props.shift
     assert_equal("key", key.name)
     assert_equal("NSString *", key.type)
 
-    value = props["value"]
+    value = props.shift
     assert_equal("value", value.name)
     assert_equal("TSTValueModel *", value.type)
 
@@ -123,11 +118,11 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    name = props["name"]
+    name = props.shift
     assert_equal("name", name.name)
     assert_equal("NSString *", name.type)
 
-    obj = props["obj"]
+    obj = props.shift
     assert_equal("obj", obj.name)
     assert_equal("TSTValueObjModel *", obj.type)
 
@@ -139,11 +134,11 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    id = props["id"]
+    id = props.shift
     assert_equal("id", id.name)
     assert_equal("NSString *", id.type)
 
-    data = props["data"]
+    data = props.shift
     assert_equal("data", data.name)
     assert_equal("NSString *", data.type)
   end
@@ -178,15 +173,15 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    key = props["key"]
+    key = props.shift
     assert_equal("key", key.name)
     assert_equal("NSString *", key.type)
 
-    value = props["value"]
+    value = props.shift
     assert_equal("value", value.name)
     assert_equal("TSTObjModel *", value.type)
 
-    banner = props["banner"]
+    banner = props.shift
     assert_equal("banner", banner.name)
     assert_equal("NSString *", banner.type)
 
@@ -198,11 +193,11 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    name = props["name"]
+    name = props.shift
     assert_equal("name", name.name)
     assert_equal("NSString *", name.type)
 
-    count = props["count"]
+    count = props.shift
     assert_equal("count", count.name)
     assert_equal("NSInteger ", count.type)
   end
@@ -242,11 +237,11 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    key = props["key"]
+    key = props.shift
     assert_equal("key", key.name)
     assert_equal("NSString *", key.type)
 
-    value = props["value"]
+    value = props.shift
     assert_equal("value", value.name)
     assert_equal("TSTObj2Model *", value.type)
 
@@ -258,11 +253,11 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    key = props["key"]
+    key = props.shift
     assert_equal("key", key.name)
     assert_equal("NSString *", key.type)
 
-    value = props["value"]
+    value = props.shift
     assert_equal("value", value.name)
     assert_equal("TSTObj3Model *", value.type)
 
@@ -274,11 +269,11 @@ class TestGenerator < Minitest::Test
     # properties
     props = model[:h].properties
 
-    key = props["key"]
+    key = props.shift
     assert_equal("key", key.name)
     assert_equal("NSString *", key.type)
 
-    value = props["value"]
+    value = props.shift
     assert_equal("value", value.name)
     assert_equal("NSString *", value.type)
   end

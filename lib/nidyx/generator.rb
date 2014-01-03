@@ -46,7 +46,7 @@ module Nidyx
 
       properties = object_at_path(path, schema)
       properties.each do |k, v|
-        model.properties[k] = generate_property(k, v, path + [k], model, models, schema)
+        model.properties << generate_property(k, v, path + [k], model, models, schema)
       end
 
       models[name][:h] = model
@@ -55,8 +55,7 @@ module Nidyx
     def generate_property(name, value, path, model, models, schema)
       # if property is a reference
       if value[REF_KEY]
-        ptr = Nidyx::Pointer.new(value[REF_KEY])
-        path = ptr.path
+        path = Nidyx::Pointer.new(value[REF_KEY]).path
         value = object_at_path(path, schema)
       end
 
