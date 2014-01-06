@@ -27,8 +27,7 @@ module Nidyx
     REF_KEY = "$ref"
 
     # @param path [Hash] the path in the schema of the model to be generated
-    # @param name [String] the model's name
-    # (for model lookup)
+    # @param name [String] the model's name (for model lookup)
     def generate_model(path, name)
       @models[name] = {}
       generate_h(path + ["properties"], name)

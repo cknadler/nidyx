@@ -1,7 +1,7 @@
 {{> nidyx/top_info}}
 {{> nidyx/imports}}
 
-@interface {{name}}
+@interface {{name}}{{#json_model}} : JSONModel{{/json_model}}
 
 {{#properties}}
 {{#desc}}

@@ -11,8 +11,17 @@ module Nidyx
       super
       self.file_name = header_path(name)
       self.properties = []
-      self.json_model = options[:json_model]
       self.imports = []
+      add_json_model if options[:json_model]
+    end
+
+    private
+
+    JSON_MODEL_IMPORT = "JSONModel"
+
+    def add_json_model
+      self.json_model = true
+      self.imports << JSON_MODEL_IMPORT
     end
   end
 end
