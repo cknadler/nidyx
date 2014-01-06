@@ -38,35 +38,34 @@ module Nidyx
     def generate_h(path, name)
       model = Nidyx::ModelH.new(name, @options)
 
-      properties = object_at_path(path, @schema)
-      properties.each do |k, v|
-        generate_property(k, v, path + [k], model)
+      object_at_path(path, @schema).each do |key, obj|
+        generate_property(key, obj, path + [key], model)
       end
 
       @models[name][:h] = model
     end
 
-    def generate_property(name, value, path, model)
+    def generate_property(key, obj, path, model)
       class_name = nil
 
-      # if property is a reference
-      if value[REF_KEY]
-        path = Nidyx::Pointer.new(value[REF_KEY]).path
-        value = object_at_path(path, @schema)
+      # if property is a reference, resolve the object path
+      if obj[REF_KEY]
+        path = Nidyx::Pointer.new(obj[REF_KEY]).path
+        obj = object_at_path(path, @schema)
       end
 
       # if property is an object
-      if value["type"] == "object"
+      if obj["type"] == "object"
         class_name = class_name_from_path(@class_prefix, path)
         model.imports << class_name
         generate_model(path, class_name) unless @models.include?(class_name)
       end
 
-      model.properties << Nidyx::Property.new(name, class_name, value)
+      model.properties << Nidyx::Property.new(key, class_name, obj)
     end
 
-    def generate_m(name)
-      @models[name][:m] = Nidyx::ModelM.new(name, @options)
+    def generate_m(key)
+      @models[key][:m] = Nidyx::ModelM.new(key, @options)
     end
 
     def empty_schema?(schema)

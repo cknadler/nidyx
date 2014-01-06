@@ -25,5 +25,5 @@ spec = Gem::Specification.new do |s|
   s.executables      = ["nidyx"]
   s.files            = Dir["lib/**/*"]
   s.test_files       = Dir["test/**/test*"]
-  s.extra_rdoc_files = ["readme.md","LICENSE"]
+  s.extra_rdoc_files = ["README.md","LICENSE"]
 end
