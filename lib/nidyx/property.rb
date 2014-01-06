@@ -1,48 +1,84 @@
 module Nidyx
   class Property
-    attr_reader :name, :attributes, :type, :desc
+    attr_reader :name, :attributes, :type, :typename, :desc, :optional
 
     # @param name [String] property name
     # @param class_name [String] class name, only for object properties
-    # @param contx [Hash] the properties attributes from JSON Schema
-    def initialize(name, class_name, contx)
+    # @param obj [Hash] the property object in schema format
+    # @param optional [Boolean] true if the property can be null or empty
+    def initialize(name, class_name, obj, optional)
       @name = name
-      @attributes = ATTRIBUTES[type]
-      @type = get_objc_type(post_process_type(contx), class_name)
-      @desc = contx["description"]
+      @optional = optional
+      @type = process_json_type(obj)
+      @attributes = ATTRIBUTES[@type]
+      @typename = type_name(@type, class_name)
+      @desc = obj["description"]
+    end
+
+    def is_object?
+      OBJECTS.include?(self.type)
     end
 
     private
 
     ATTRIBUTES = {
-      "array"    => "(strong, nonatomic)",
-      "boolean"  => "(assign, nonatomic)",
-      "integer"  => "(assign, nonatomic)",
-      "unsigned" => "(assign, nonatomic)",
-      "number"   => "(nonatomic)",
-      "object"   => "(strong, nonatomic)",
-      "string"   => "(strong, nonatomic)"
+      :array      => "(strong, nonatomic)",
+      :boolean    => "(assign, nonatomic)",
+      :integer    => "(assign, nonatomic)",
+      :unsigned   => "(assign, nonatomic)",
+      :number     => "(nonatomic)",
+      :number_obj => "(strong, nonatomic)",
+      :string     => "(strong, nonatomic)",
+      :object     => "(strong, nonatomic)",
+      :id         => "(strong, nonatomic)"
     }
 
     TYPES = {
-      "array"    => "NSArray *",
-      "boolean"  => "BOOL ",
-      "integer"  => "NSInteger ",
-      "unsigned" => "NSUInteger ",
-      "number"   => "double ",
-      "string"   => "NSString *"
+      :array      => "NSArray",
+      :boolean    => "BOOL",
+      :integer    => "NSInteger",
+      :unsigned   => "NSUInteger",
+      :number     => "double",
+      :number_obj => "NSNumber",
+      :string     => "NSString",
+      :id         => "id"
     }
 
-    def post_process_type(contx)
-      case contx["type"]
+    OBJECTS = [:array, :number_obj, :string, :object, :id]
+
+    NUMBERS = [:boolean, :integer, :number]
+
+    # @param obj [Hash] the property object in schema format
+    def process_json_type(obj)
+      type = obj["type"]
+
+      case type
+      when Array
+        return process_array_type(type, obj)
+
+      when "boolean", "number"
+        return self.optional ? :number : type.to_sym
+
       when "integer"
-        return "unsigned" if contx["minimum"] && contx["minimum"] >= 0
+        return :number if self.optional
+        (obj["minimum"] && obj["minimum"] >= 0) ? :unsigned : :integer
+
+      when "null"
+        return :id
+
+      else
+        return type.to_sym
       end
-      contx["type"]
     end
 
-    def get_objc_type(type, class_name)
-      type == "object" ? "#{class_name} *" : TYPES[type]
+    # @param type [Array] an array of types of a specific property
+    # @param obj [Hash] the property object in schema format
+    def process_array_type(type, obj)
+
+    end
+
+    def type_name(type, class_name)
+      type == :object ? class_name : TYPES[type]
     end
   end
 end

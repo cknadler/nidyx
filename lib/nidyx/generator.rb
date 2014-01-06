@@ -30,27 +30,40 @@ module Nidyx
     # @param name [String] the model's name (for model lookup)
     def generate_model(path, name)
       @models[name] = {}
-      generate_h(path + ["properties"], name)
+      generate_h(path, name)
       generate_m(name)
     end
 
     def generate_h(path, name)
       model = Nidyx::ModelH.new(name, @options)
+      required_properties = get_object(path)["required"]
+      properties_path = path + ["properties"]
 
-      object_at_path(path, @schema).each do |key, obj|
-        generate_property(key, obj, path + [key], model)
+      get_object(properties_path).each do |key, obj|
+        optional = is_optional?(key, required_properties)
+        property_path = properties_path + [key]
+        generate_property(key, obj, property_path, model, optional)
       end
 
       @models[name][:h] = model
     end
 
-    def generate_property(key, obj, path, model)
+    def generate_m(key)
+      @models[key][:m] = Nidyx::ModelM.new(key, @options)
+    end
+
+    # @param key [String] the key of the property in the JSON Schema
+    # @param obj [Hash] the object of the aforementioned key in the schema
+    # @param path [Array] the path to the aforementioned object in the schema
+    # @param model [Property] the model that owns the property to be generated
+    # @param optional [Boolean] true if the property can be empty or null
+    def generate_property(key, obj, path, model, optional)
       class_name = nil
 
       # if property is a reference, resolve the object path
       if obj[REF_KEY]
         path = Nidyx::Pointer.new(obj[REF_KEY]).path
-        obj = object_at_path(path, @schema)
+        obj = get_object(path)
       end
 
       # if property is an object
@@ -60,16 +73,20 @@ module Nidyx
         generate_model(path, class_name) unless @models.include?(class_name)
       end
 
-      model.properties << Nidyx::Property.new(key, class_name, obj)
-    end
-
-    def generate_m(key)
-      @models[key][:m] = Nidyx::ModelM.new(key, @options)
+      model.properties << Nidyx::Property.new(key, class_name, obj, optional)
     end
 
     def empty_schema?(schema)
       props = schema["properties"]
       props == nil || props.empty?
+    end
+
+    def get_object(path)
+      object_at_path(path, @schema)
+    end
+
+    def is_optional?(key, required_keys)
+      !(required_keys && required_keys.include?(key))
     end
   end
 end
