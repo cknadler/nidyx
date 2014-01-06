@@ -3,33 +3,12 @@ require "nidyx" # we use some core_ext stuff that requires this
 require "nidyx/generator"
 
 class TestGenerator < Minitest::Test
-  def setup
-    @gen = Nidyx::Generator.new("TST", {})
-  end
-
-  # Do basic validation of a class's `.h` and `.m` file
-  # Return the model for further validation once this is complete
-  def validate_model_files(models, name, header_imports)
-    model = models[name]
-
-    # header
-    assert_equal(name, model[:h].name)
-    assert_equal(name + ".h", model[:h].file_name)
-    assert_equal(header_imports, model[:h].imports)
-
-    # implementation
-    assert_equal(name, model[:m].name)
-    assert_equal(name + ".m", model[:m].file_name)
-    assert_equal([name], model[:m].imports)
-
-    model
-  end
 
   def test_empty_schema
     schema = { "type" => "object" }
 
     begin
-      @gen.spawn(schema)
+      run_generate(schema)
       assert(false)
     rescue EmptySchemaError
       assert(true)
@@ -47,7 +26,7 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = @gen.spawn(schema)
+    models = run_generate(schema)
     model = models["TSTModel"]
     props = model[:h].properties
 
@@ -63,7 +42,7 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = @gen.spawn(schema)
+    models = run_generate(schema)
     model = validate_model_files(models, "TSTModel", [])
 
     # properties
@@ -101,7 +80,7 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = @gen.spawn(schema)
+    models = run_generate(schema)
 
     ###
     # root model
@@ -170,7 +149,7 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = @gen.spawn(schema)
+    models = run_generate(schema)
 
     ###
     # root model
@@ -216,7 +195,7 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = @gen.spawn(schema)
+    models = run_generate(schema)
     model = models["TSTModel"]
     props = model[:h].properties
 
@@ -225,6 +204,33 @@ class TestGenerator < Minitest::Test
 
     larger = props.shift
     assert_equal("NSUInteger ", larger.type)
+  end
+
+  private
+
+  CLASS_PREFIX = "TST"
+  OPTIONS = {}
+
+  def run_generate(schema)
+    Nidyx::Generator.spawn(CLASS_PREFIX, OPTIONS, schema)
+  end
+
+  # Do basic validation of a class's `.h` and `.m` file
+  # Return the model for further validation once this is complete
+  def validate_model_files(models, name, header_imports)
+    model = models[name]
+
+    # header
+    assert_equal(name, model[:h].name)
+    assert_equal(name + ".h", model[:h].file_name)
+    assert_equal(header_imports, model[:h].imports)
+
+    # implementation
+    assert_equal(name, model[:m].name)
+    assert_equal(name + ".m", model[:m].file_name)
+    assert_equal([name], model[:m].imports)
+
+    model
   end
 end
 

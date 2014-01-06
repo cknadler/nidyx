@@ -3,27 +3,23 @@ require "nidyx/model_h"
 require "nidyx/model_m"
 require "nidyx/property"
 require "nidyx/pointer"
-require "pry"
 
 include Nidyx::Common
 
 class EmptySchemaError < StandardError; end
 
 module Nidyx
-  class Generator
-    attr_accessor :class_prefix, :options
+  module Generator
+    extend self
 
-    def initialize(class_prefix, options)
+    def spawn(class_prefix, options, schema)
       @class_prefix = class_prefix
       @options = options
-    end
-
-    def spawn(schema)
       raise EmptySchemaError if empty_schema?(schema)
-
-      models = {}
-      generate_model([], class_name(self.class_prefix, nil), schema, models)
-      models
+      @schema = schema
+      @models = {}
+      generate_model([], class_name(@class_prefix, nil))
+      @models
     end
 
     private
@@ -32,47 +28,45 @@ module Nidyx
 
     # @param path [Hash] the path in the schema of the model to be generated
     # @param name [String] the model's name
-    # @param schema [Hash] the full schema (for definition lookup)
-    # @param models [Hash] a hash containing all of the generated models
     # (for model lookup)
-    def generate_model(path, name, schema, models)
-      models[name] = {}
-      generate_h(path + ["properties"], name, schema, models)
-      generate_m(name, models)
+    def generate_model(path, name)
+      @models[name] = {}
+      generate_h(path + ["properties"], name)
+      generate_m(name)
     end
 
-    def generate_h(path, name, schema, models)
-      model = Nidyx::ModelH.new(name, self.options)
+    def generate_h(path, name)
+      model = Nidyx::ModelH.new(name, @options)
 
-      properties = object_at_path(path, schema)
+      properties = object_at_path(path, @schema)
       properties.each do |k, v|
-        model.properties << generate_property(k, v, path + [k], model, models, schema)
+        generate_property(k, v, path + [k], model)
       end
 
-      models[name][:h] = model
+      @models[name][:h] = model
     end
 
-    def generate_property(name, value, path, model, models, schema)
+    def generate_property(name, value, path, model)
       class_name = nil
 
       # if property is a reference
       if value[REF_KEY]
         path = Nidyx::Pointer.new(value[REF_KEY]).path
-        value = object_at_path(path, schema)
+        value = object_at_path(path, @schema)
       end
 
       # if property is an object
       if value["type"] == "object"
-        class_name = class_name_from_path(self.class_prefix, path)
+        class_name = class_name_from_path(@class_prefix, path)
         model.imports << class_name
-        generate_model(path, class_name, schema, models) unless models.include?(class_name)
+        generate_model(path, class_name) unless @models.include?(class_name)
       end
 
-      Nidyx::Property.new(name, class_name, value)
+      model.properties << Nidyx::Property.new(name, class_name, value)
     end
 
-    def generate_m(name, models)
-      models[name][:m] = Nidyx::ModelM.new(name, self.options)
+    def generate_m(name)
+      @models[name][:m] = Nidyx::ModelM.new(name, @options)
     end
 
     def empty_schema?(schema)

@@ -107,8 +107,6 @@ rescue JSON::JSONError
   exit 1
 end
 
-# Run the generator and store the models
-gen = Nidyx::Generator.new(ARGV[1], options)
-models = gen.spawn(schema)
-
+# Run generator and print models
+models = Nidyx::Generator.spawn(ARGV[1], options, schema)
 Nidyx::Output.write(models, ARGV[2])
