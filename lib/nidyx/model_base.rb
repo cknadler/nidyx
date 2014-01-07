@@ -2,7 +2,7 @@ require "mustache"
 
 module Nidyx
   class ModelBase < Mustache
-    self.template_path = "lib"
+    self.template_path = File.join(File.dirname(__FILE__), "..")
     attr_accessor :name, :file_name, :author, :owner, :project, :imports
 
     def initialize(name, options)
