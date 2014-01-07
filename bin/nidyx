@@ -14,7 +14,7 @@ require "nidyx/output"
 BANNER = <<END
 usage: nidyx [-h] [--version]
        nidyx <schema> <class-prefix> [output-directory]
-             [-j] [-a author] [-c company] [-p project]
+             [-j] [-x] [-a author] [-c company] [-p project]
 
 END
 
@@ -46,14 +46,13 @@ END
 # option parsing
 ###
 
-options = {}
+# defaults
+options = {
+  :comments => true
+}
 
 opts = OptionParser.new do |o|
   o.banner = BANNER
-
-  o.on("-j", "--json-model", "Generate with JSONModel support") do |j|
-    options[:json_model] = j
-  end
 
   o.on("-a", "--author AUTHOR", "Author's name") do |a|
     options[:author] = a
@@ -65,6 +64,14 @@ opts = OptionParser.new do |o|
 
   o.on("-p", "--project PROJECT", "Project's name") do |p|
     options[:project] = p
+  end
+
+  o.on("-j", "--json-model", "Generate with JSONModel support") do |j|
+    options[:json_model] = j
+  end
+
+  o.on("-n", "--no-comments", "Generate without header comments") do |n|
+    options[:comments] = false
   end
 
   o.on("-h", "--help", "Print usage information") do
