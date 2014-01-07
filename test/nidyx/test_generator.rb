@@ -3,7 +3,6 @@ require "nidyx" # we use some core_ext stuff that requires this
 require "nidyx/generator"
 
 class TestGenerator < Minitest::Test
-
   def test_empty_schema
     schema = { "type" => "object" }
 
