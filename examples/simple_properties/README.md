@@ -3,5 +3,5 @@
 Generated with:
 
 ```
-$ nidyx simple_properties.json.schema Example -n
+$ nidyx simple_properties.json.schema Example -j -n
 ```
