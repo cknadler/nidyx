@@ -1,6 +1,7 @@
+#import "JSONModel.h"
 #import "ExampleObjectModel.h"
 
-@interface ExampleModel
+@interface ExampleModel : JSONModel
 
 @property (strong, nonatomic) NSArray *array;
 @property (assign, nonatomic) BOOL boolean;

@@ -4,8 +4,8 @@
   "required": [
     "array",
     "similar_stuff",
-    "unsigned",
-    "not_reall_similar_stuff"
+    "positive",
+    "not_really_similar_stuff"
   ],
   "properties": {
     "array": {
