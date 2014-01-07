@@ -2,11 +2,11 @@
 
 @interface ExampleModel
 
-@property (strong, nonatomic) array *array;
-@property (assign, nonatomic) boolean boolean;
-@property (assign, nonatomic) integer integer;
-@property (nonatomic) number number;
-@property (strong, nonatomic) string *string;
-@property (strong, nonatomic) object *object;
+@property (strong, nonatomic) NSArray *array;
+@property (assign, nonatomic) BOOL boolean;
+@property (assign, nonatomic) NSInteger integer;
+@property (nonatomic) double number;
+@property (strong, nonatomic) NSString *string;
+@property (strong, nonatomic) ExampleObjectModel *object;
 
 @end

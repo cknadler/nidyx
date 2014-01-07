@@ -1,5 +1,5 @@
 @interface ExampleObjectModel
 
-@property (strong, nonatomic) string *value;
+@property (strong, nonatomic) NSString *value;
 
 @end
