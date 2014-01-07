@@ -42,7 +42,7 @@ module Nidyx
       get_object(properties_path).each do |key, obj|
         optional = is_optional?(key, required_properties)
         property_path = properties_path + [key]
-        generate_property(key, obj, property_path, model, optional)
+        generate_property(key, property_path, model, optional)
       end
 
       @models[name][:h] = model
@@ -53,18 +53,14 @@ module Nidyx
     end
 
     # @param key [String] the key of the property in the JSON Schema
-    # @param obj [Hash] the object of the aforementioned key in the schema
     # @param path [Array] the path to the aforementioned object in the schema
     # @param model [Property] the model that owns the property to be generated
     # @param optional [Boolean] true if the property can be empty or null
-    def generate_property(key, obj, path, model, optional)
+    def generate_property(key, path, model, optional)
       class_name = nil
 
-      # if property is a reference, resolve the object path
-      if obj[REF_KEY]
-        path = Nidyx::Pointer.new(obj[REF_KEY]).path
-        obj = get_object(path)
-      end
+      path = resolve_refs(path)
+      obj = get_object(path)
 
       # if property is an object
       if obj["type"] == "object"
@@ -74,6 +70,13 @@ module Nidyx
       end
 
       model.properties << Nidyx::Property.new(key, class_name, obj, optional)
+    end
+
+
+    def resolve_refs(path)
+      obj = get_object(path)
+      return resolve_refs(Nidyx::Pointer.new(obj[REF_KEY]).path) if obj[REF_KEY]
+      path
     end
 
     def empty_schema?(schema)

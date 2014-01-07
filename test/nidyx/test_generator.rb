@@ -206,6 +206,70 @@ class TestGenerator < Minitest::Test
     assert_equal("NSUInteger", larger.type_name)
   end
 
+  def test_chained_refs
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value1" => { "$ref" => "#/definitions/value2" }
+      },
+      "definitions" => {
+        "value2" => { "$ref" => "#/definitions/value3" },
+        "value3" => { "type" => "string" }
+      }
+    }
+
+    models = run_generate(schema)
+    model = models["TSTModel"]
+    props = model[:h].properties
+
+    value1 = props.shift
+    assert_equal("NSString", value1.type_name)
+  end
+
+  def test_chained_refs_to_an_object
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value1" => { "$ref" => "#/definitions/value2" }
+      },
+      "definitions" => {
+        "value2" => { "$ref" => "#/definitions/value3" },
+        "value3" => {
+          "type" => "object",
+          "properties" => {
+            "value4" => { "type" => "string" }
+          }
+        }
+      }
+    }
+
+    models = run_generate(schema)
+
+    ###
+    # root model
+    ###
+    model = models["TSTModel"]
+    props = model[:h].properties
+
+    value1 = props.shift
+    assert_equal("TSTValue3Model", value1.type_name)
+
+    ###
+    # mid ref
+    ###
+    model = models["TSTValue2Model"] # this should never exist
+    assert_equal(nil, model)
+
+    ###
+    # end ref
+    ###
+    model = models["TSTValue3Model"]
+    props = model[:h].properties
+
+    value4 = props.shift
+    assert_equal("NSString", value4.type_name)
+  end
+
   private
 
   CLASS_PREFIX = "TST"
@@ -233,4 +297,3 @@ class TestGenerator < Minitest::Test
     model
   end
 end
-
