@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [ "key", "value" ],
+  "properties": {
+    "key": { "type": "string" },
+    "value": {
+      "type": "object",
+      "required": [ "name" ],
+      "properties": {
+        "name": { "type": "string" },
+        "obj": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "data": { "$ref": "#/definitions/obj" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "obj": {
+      "type": "object",
+      "required": ["size", "content"],
+      "properties": {
+        "size": {
+          "type": ["integer", "number"]
+        },
+        "content": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}
+
