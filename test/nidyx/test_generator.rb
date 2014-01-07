@@ -50,12 +50,12 @@ class TestGenerator < Minitest::Test
 
     key = props.shift
     assert_equal("key", key.name)
-    assert_equal("NSString *", key.type)
+    assert_equal("NSString", key.type_name)
     assert_equal(nil, key.desc)
 
     value = props.shift
     assert_equal("value", value.name)
-    assert_equal("NSString *", value.type)
+    assert_equal("NSString", value.type_name)
     assert_equal(nil, value.desc)
   end
 
@@ -92,11 +92,11 @@ class TestGenerator < Minitest::Test
 
     key = props.shift
     assert_equal("key", key.name)
-    assert_equal("NSString *", key.type)
+    assert_equal("NSString", key.type_name)
 
     value = props.shift
     assert_equal("value", value.name)
-    assert_equal("TSTValueModel *", value.type)
+    assert_equal("TSTValueModel", value.type_name)
 
     ###
     # value model
@@ -108,11 +108,11 @@ class TestGenerator < Minitest::Test
 
     name = props.shift
     assert_equal("name", name.name)
-    assert_equal("NSString *", name.type)
+    assert_equal("NSString", name.type_name)
 
     obj = props.shift
     assert_equal("obj", obj.name)
-    assert_equal("TSTValueObjModel *", obj.type)
+    assert_equal("TSTValueObjModel", obj.type_name)
 
     ###
     # value obj model
@@ -124,11 +124,11 @@ class TestGenerator < Minitest::Test
 
     id = props.shift
     assert_equal("id", id.name)
-    assert_equal("NSString *", id.type)
+    assert_equal("NSString", id.type_name)
 
     data = props.shift
     assert_equal("data", data.name)
-    assert_equal("NSString *", data.type)
+    assert_equal("NSString", data.type_name)
   end
 
   def test_definitions
@@ -161,7 +161,7 @@ class TestGenerator < Minitest::Test
 
     value = props.shift
     assert_equal("value", value.name)
-    assert_equal("TSTObjModel *", value.type)
+    assert_equal("TSTObjModel", value.type_name)
 
     ###
     # obj model
@@ -173,16 +173,17 @@ class TestGenerator < Minitest::Test
 
     banner = props.shift
     assert_equal("banner", banner.name)
-    assert_equal("NSString *", banner.type)
+    assert_equal("NSString", banner.type_name)
 
     count = props.shift
     assert_equal("count", count.name)
-    assert_equal("NSInteger ", count.type)
+    assert_equal("NSNumber", count.type_name)
   end
 
   def test_unsigned_integer
     schema = {
       "type" => "object",
+      "required" => ["larger"],
       "properties" => {
         "value" => {
           "type" => "integer",
@@ -200,10 +201,10 @@ class TestGenerator < Minitest::Test
     props = model[:h].properties
 
     value = props.shift
-    assert_equal("NSUInteger ", value.type)
+    assert_equal("NSNumber", value.type_name)
 
     larger = props.shift
-    assert_equal("NSUInteger ", larger.type)
+    assert_equal("NSUInteger", larger.type_name)
   end
 
   private

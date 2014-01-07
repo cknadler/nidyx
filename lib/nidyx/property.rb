@@ -1,6 +1,6 @@
 module Nidyx
   class Property
-    attr_reader :name, :attributes, :type, :typename, :desc, :optional
+    attr_reader :name, :attributes, :type, :type_name, :desc, :optional
 
     # @param name [String] property name
     # @param class_name [String] class name, only for object properties
@@ -11,11 +11,11 @@ module Nidyx
       @optional = optional
       @type = process_json_type(obj)
       @attributes = ATTRIBUTES[@type]
-      @typename = type_name(@type, class_name)
+      @type_name = lookup_type_name(@type, class_name)
       @desc = obj["description"]
     end
 
-    def is_object?
+    def is_obj?
       OBJECTS.include?(self.type)
     end
 
@@ -46,24 +46,32 @@ module Nidyx
 
     OBJECTS = [:array, :number_obj, :string, :object, :id]
 
-    NUMBERS = [:boolean, :integer, :number]
+    NUMBERS = ["boolean", "integer", "number"]
 
     # @param obj [Hash] the property object in schema format
     def process_json_type(obj)
       type = obj["type"]
 
-      case type
-      when Array
+      if type.is_a?(Array)
         return process_array_type(type, obj)
+      else
+        return process_simple_type(type, obj)
+      end
+    end
 
+    # @param type [String] a property type string
+    # @param obj [Hash] the property object in schema format
+    def process_simple_type(type, obj)
+      case type
       when "boolean", "number"
-        return self.optional ? :number : type.to_sym
+        return self.optional ? :number_obj : type.to_sym
 
       when "integer"
-        return :number if self.optional
+        return :number_obj if self.optional
         (obj["minimum"] && obj["minimum"] >= 0) ? :unsigned : :integer
 
       when "null"
+        @optional = true
         return :id
 
       else
@@ -71,13 +79,22 @@ module Nidyx
       end
     end
 
-    # @param type [Array] an array of types of a specific property
+    # @param type [Array] an array of property types
     # @param obj [Hash] the property object in schema format
     def process_array_type(type, obj)
+      # if the key is optional
+      if type.include?("null")
+        @optional = true
+        type -= ["null"]
 
+        # single optional type
+        return process_simple_type(type.shift, obj) if type.size == 1
+      end
+
+      (type - NUMBERS).empty? ? :number_obj : :id
     end
 
-    def type_name(type, class_name)
+    def lookup_type_name(type, class_name)
       type == :object ? class_name : TYPES[type]
     end
   end
