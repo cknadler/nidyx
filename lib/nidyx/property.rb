@@ -74,6 +74,10 @@ module Nidyx
         @optional = true
         return :id
 
+      when nil
+        # default to string
+        return :string
+
       else
         return type.to_sym
       end

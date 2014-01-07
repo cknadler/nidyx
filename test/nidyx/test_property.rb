@@ -157,6 +157,19 @@ class TestProperty < Minitest::Test
     assert_equal(:id, p.type)
   end
 
+  def test_untyped
+    obj = { "enum" => ["a", "b"] }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:string, p.type)
+  end
+
+  def test_explicit_optional_untyped
+    obj = { "enum" => ["a", "b"] }
+    p = Nidyx::Property.new("i", nil, obj, true)
+    assert_equal(:string, p.type)
+    assert_equal(true, p.optional)
+  end
+
   private
 
   def make_simple_property(type)
