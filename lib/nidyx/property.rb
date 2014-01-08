@@ -88,6 +88,9 @@ module Nidyx
       end
     end
 
+    # @param enum [Array] an array of possible property values
+    # @param obj [Hash] the property object in schema format
+    # @return [Symbol] an obj-c property type
     def process_enum_type(enum, obj)
       raise NonArrayEnumError unless enum.is_a?(Array)
 
