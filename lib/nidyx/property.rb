@@ -1,6 +1,11 @@
+
 module Nidyx
   class Property
     attr_reader :name, :attributes, :type, :type_name, :desc, :optional
+
+    class UndefinedTypeError < StandardError; end
+    class NonArrayEnumError < StandardError; end
+    class UnsupportedEnumTypeError < StandardError; end
 
     # @param name [String] property name
     # @param class_name [String] class name, only for object properties
@@ -34,6 +39,7 @@ module Nidyx
       :id         => "(strong, nonatomic)"
     }
 
+    # :object intentionally omitted
     TYPES = {
       :array      => "NSArray",
       :boolean    => "BOOL",
@@ -43,6 +49,16 @@ module Nidyx
       :number_obj => "NSNumber",
       :string     => "NSString",
       :id         => "id"
+    }
+
+    # Hash and Array intentionally omitted
+    ENUM_TYPES = {
+      Fixnum     => "integer",
+      String     => "string",
+      NilClass   => "null",
+      Float      => "number",
+      TrueClass  => "boolean",
+      FalseClass => "boolean"
     }
 
     OBJECTS = [ :array, :number_obj, :string, :object, :id ]
@@ -61,13 +77,24 @@ module Nidyx
     # @param obj [Hash] the property object in schema format
     # @return [Symbol] an obj-c property type
     def process_json_type(obj)
-      type = obj["type"]
+      enum = obj["enum"]
+      return process_enum_type(enum, obj) if enum
 
+      type = obj["type"]
       if type.is_a?(Array)
         return process_array_type(type, obj)
       else
         return process_simple_type(type, obj)
       end
+    end
+
+    def process_enum_type(enum, obj)
+      raise NonArrayEnumError unless enum.is_a?(Array)
+
+      types = enum.map { |a| a.class }.uniq
+      raise UnsupportedEnumTypeError unless (types & [ Array, Hash ]).empty?
+
+      process_array_type(types.map { |t| ENUM_TYPES[t] }, obj)
     end
 
     # @param type [String] a property type string
@@ -87,8 +114,7 @@ module Nidyx
         return :id
 
       when nil
-        # default to string
-        return :string
+        raise UndefinedTypeError
 
       else
         return type.to_sym
@@ -103,10 +129,10 @@ module Nidyx
       if type.include?("null")
         @optional = true
         type -= ["null"]
-
-        # single optional type
-        return process_simple_type(type.shift, obj) if type.size == 1
       end
+
+      # single optional type
+      return process_simple_type(type.shift, obj) if type.size == 1
 
       return :number if (type - SIMPLE_NUMBERS).empty? && !@optional
       return :number_obj if (type - BOXABLE_NUMBERS).empty?
