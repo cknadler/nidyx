@@ -270,6 +270,80 @@ class TestGenerator < Minitest::Test
     assert_equal("NSString", value4.type_name)
   end
 
+  def test_array_lookups
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "string_array" => {
+          "type" => "array",
+          "items" => [ "string", "null" ]
+        },
+        "object_array" => {
+          "type" => "array",
+          "items" => { "$ref" => "#/definitions/object" }
+        },
+        "multi_object_array" => {
+          "type" => "array",
+          "items" => [
+            { "$ref" => "#/definitions/object" },
+            { "$ref" => "#/definitions/other_object" }
+          ]
+        }
+      },
+      "definitions" => {
+        "object" => {
+          "type" => "object",
+          "required" => [ "value" ],
+          "properties" => {
+            "value" => { "type" => "integer" }
+          }
+        },
+        "other_object" => {
+          "type" => "object",
+          "properties" => {
+            "value" => { "type" => "string" }
+          }
+        }
+      }
+    }
+
+    models = run_generate(schema)
+    assert_equal(3, models.size)
+
+    ###
+    # root model
+    ###
+    model = models["TSTModel"]
+    props = model[:h].properties
+
+    string_array = props.shift
+    assert_equal("NSArray", string_array.type_name)
+
+    object_array = props.shift
+    assert_equal("NSArray", object_array.type_name)
+
+    multi_object_array = props.shift
+    assert_equal("NSArray", multi_object_array.type_name)
+
+    ###
+    # object model
+    ###
+    model = models["TSTObjectModel"]
+    props = model[:h].properties
+
+    value = props.shift
+    assert_equal(:integer, value.type)
+
+    ###
+    # other object model
+    ###
+    model = models["TSTOtherObjectModel"]
+    props = model[:h].properties
+
+    value = props.shift
+    assert_equal(:string, value.type)
+  end
+
   private
 
   CLASS_PREFIX = "TST"

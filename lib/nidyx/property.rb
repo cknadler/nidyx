@@ -1,4 +1,3 @@
-
 module Nidyx
   class Property
     attr_reader :name, :attributes, :type, :type_name, :desc, :optional
@@ -137,6 +136,7 @@ module Nidyx
       # single optional type
       return process_simple_type(type.shift, obj) if type.size == 1
 
+      # conjoined number types
       return :number if (type - SIMPLE_NUMBERS).empty? && !@optional
       return :number_obj if (type - BOXABLE_NUMBERS).empty?
 
