@@ -170,6 +170,18 @@ class TestProperty < Minitest::Test
     assert_equal(true, p.optional)
   end
 
+  def test_simple_numbers
+    obj = { "type" => [ "integer", "number" ] }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:number, p.type)
+  end
+
+  def test_simple_numbers
+    obj = { "type" => [ "integer", "number" ] }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:number, p.type)
+  end
+
   private
 
   def make_simple_property(type)

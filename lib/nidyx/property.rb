@@ -15,6 +15,7 @@ module Nidyx
       @desc = obj["description"]
     end
 
+    # @return [Boolean] true if the obj-c property type is an object
     def is_obj?
       OBJECTS.include?(self.type)
     end
@@ -44,11 +45,21 @@ module Nidyx
       :id         => "id"
     }
 
-    OBJECTS = [:array, :number_obj, :string, :object, :id]
+    OBJECTS = [ :array, :number_obj, :string, :object, :id ]
 
-    NUMBERS = ["boolean", "integer", "number"]
+    NUMBERS = [ "boolean", "integer", "number" ]
+
+    SIMPLE_NUMBERS = [ "integer", "number" ]
+
+    # @param type [Symbol] an obj-c property type
+    # @param class_name [String] an object's type name
+    # @return [String] the property's type name
+    def lookup_type_name(type, class_name)
+      type == :object ? class_name : TYPES[type]
+    end
 
     # @param obj [Hash] the property object in schema format
+    # @return [Symbol] an obj-c property type
     def process_json_type(obj)
       type = obj["type"]
 
@@ -61,6 +72,7 @@ module Nidyx
 
     # @param type [String] a property type string
     # @param obj [Hash] the property object in schema format
+    # @return [Symbol] an obj-c property type
     def process_simple_type(type, obj)
       case type
       when "boolean", "number"
@@ -85,6 +97,7 @@ module Nidyx
 
     # @param type [Array] an array of property types
     # @param obj [Hash] the property object in schema format
+    # @return [Symbol] an obj-c property type
     def process_array_type(type, obj)
       # if the key is optional
       if type.include?("null")
@@ -95,11 +108,10 @@ module Nidyx
         return process_simple_type(type.shift, obj) if type.size == 1
       end
 
-      (type - NUMBERS).empty? ? :number_obj : :id
-    end
+      return :number if (type - SIMPLE_NUMBERS).empty?
+      return :number_obj if (type - NUMBERS).empty?
 
-    def lookup_type_name(type, class_name)
-      type == :object ? class_name : TYPES[type]
+      :id
     end
   end
 end
