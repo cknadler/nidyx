@@ -47,7 +47,7 @@ module Nidyx
 
     OBJECTS = [ :array, :number_obj, :string, :object, :id ]
 
-    NUMBERS = [ "boolean", "integer", "number" ]
+    BOXABLE_NUMBERS = [ "boolean", "integer", "number" ]
 
     SIMPLE_NUMBERS = [ "integer", "number" ]
 
@@ -108,8 +108,8 @@ module Nidyx
         return process_simple_type(type.shift, obj) if type.size == 1
       end
 
-      return :number if (type - SIMPLE_NUMBERS).empty?
-      return :number_obj if (type - NUMBERS).empty?
+      return :number if (type - SIMPLE_NUMBERS).empty? && !@optional
+      return :number_obj if (type - BOXABLE_NUMBERS).empty?
 
       :id
     end

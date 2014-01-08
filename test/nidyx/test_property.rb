@@ -157,29 +157,41 @@ class TestProperty < Minitest::Test
     assert_equal(:id, p.type)
   end
 
-  def test_untyped
-    obj = { "enum" => ["a", "b"] }
+  def test_simple_numbers
+    obj = { "type" => [ "integer", "number" ] }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:number, p.type)
+  end
+
+  def test_simple_numbers
+    obj = { "type" => [ "integer", "number" ] }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:number, p.type)
+  end
+
+  def test_explicit_optional_simple_numbers
+    obj = { "type" => [ "integer", "number"] }
+    p = Nidyx::Property.new("i", nil, obj, true)
+    assert_equal(:number_obj, p.type)
+  end
+
+  def test_typed_optional_simple_numbers
+    obj = { "type" => [ "integer", "number", "null" ] }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:number_obj, p.type)
+  end
+
+  def test_simple_enum
+    obj = { "enum" => [1, 2] }
     p = Nidyx::Property.new("i", nil, obj, false)
     assert_equal(:string, p.type)
   end
 
-  def test_explicit_optional_untyped
+  def test_explicit_optional_enum
     obj = { "enum" => ["a", "b"] }
     p = Nidyx::Property.new("i", nil, obj, true)
     assert_equal(:string, p.type)
     assert_equal(true, p.optional)
-  end
-
-  def test_simple_numbers
-    obj = { "type" => [ "integer", "number" ] }
-    p = Nidyx::Property.new("i", nil, obj, false)
-    assert_equal(:number, p.type)
-  end
-
-  def test_simple_numbers
-    obj = { "type" => [ "integer", "number" ] }
-    p = Nidyx::Property.new("i", nil, obj, false)
-    assert_equal(:number, p.type)
   end
 
   private
