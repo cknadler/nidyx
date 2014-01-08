@@ -344,6 +344,22 @@ class TestGenerator < Minitest::Test
     assert_equal(:string, value.type)
   end
 
+  def test_unsupported_items_type_error
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value" => {
+          "type" => "array",
+          "items" => ""
+        }
+      }
+    }
+
+    assert_raises(Nidyx::Generator::UnsupportedItemsTypeError) do
+      run_generate(schema)
+    end
+  end
+
   private
 
   CLASS_PREFIX = "TST"
