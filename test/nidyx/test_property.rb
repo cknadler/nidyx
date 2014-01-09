@@ -226,9 +226,22 @@ class TestProperty < Minitest::Test
     end
   end
 
+  def test_empty_type_array
+    assert_raises(Nidyx::Property::UndefinedTypeError) do
+      obj = { "type" => [] }
+      Nidyx::Property.new("i", nil, obj, false)
+    end
+  end
+
   def test_non_array_enum
     assert_raises(Nidyx::Property::NonArrayEnumError) do
       Nidyx::Property.new("i", nil, { "enum" => {} }, false)
+    end
+  end
+
+  def test_empty_enum_array
+    assert_raises(Nidyx::Property::EmptyEnumError) do
+      Nidyx::Property.new("i", nil, { "enum" => [] }, false)
     end
   end
 

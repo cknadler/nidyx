@@ -1,9 +1,12 @@
+require "set"
+
 module Nidyx
   class Property
     attr_reader :name, :attributes, :type, :type_name, :desc, :optional
 
     class UndefinedTypeError < StandardError; end
     class NonArrayEnumError < StandardError; end
+    class EmptyEnumError < StandardError; end
     class UnsupportedEnumTypeError < StandardError; end
 
     # @param name [String] property name
@@ -55,19 +58,19 @@ module Nidyx
 
     # Hash and Array intentionally omitted
     ENUM_TYPES = {
-      Fixnum     => "integer",
-      String     => "string",
-      NilClass   => "null",
-      Float      => "number",
-      TrueClass  => "boolean",
-      FalseClass => "boolean"
+      Fixnum     => :integer,
+      String     => :string,
+      NilClass   => :null,
+      Float      => :number,
+      TrueClass  => :boolean,
+      FalseClass => :boolean
     }
 
     OBJECTS = [ :array, :number_obj, :string, :object, :id ]
 
-    BOXABLE_NUMBERS = [ "boolean", "integer", "number" ]
+    BOXABLE_NUMBERS = [ :boolean, :integer, :number ]
 
-    SIMPLE_NUMBERS = [ "integer", "number" ]
+    SIMPLE_NUMBERS = [ :integer, :number ]
 
     # @param type [Symbol] an obj-c property type
     # @param class_name [String] an object's type name
@@ -84,10 +87,18 @@ module Nidyx
 
       type = obj["type"]
       if type.is_a?(Array)
-        return process_array_type(type, obj)
+        raise UndefinedTypeError if !type || type.empty?
+        return process_array_type(type_array_to_sym(type), obj)
       else
-        return process_simple_type(type, obj)
+        raise UndefinedTypeError unless type
+        return process_simple_type(type.to_sym, obj)
       end
+    end
+
+    # @param array [Array] an array of strings
+    # @return an array of symbols
+    def type_array_to_sym(array)
+      array.map { |i| i.to_sym }
     end
 
     # @param enum [Array] an array of possible property values
@@ -95,6 +106,7 @@ module Nidyx
     # @return [Symbol] an obj-c property type
     def process_enum_type(enum, obj)
       raise NonArrayEnumError unless enum.is_a?(Array)
+      raise EmptyEnumError if enum.empty?
 
       types = enum.map { |a| a.class }.uniq
       raise UnsupportedEnumTypeError unless (types & [ Array, Hash ]).empty?
@@ -102,27 +114,24 @@ module Nidyx
       process_array_type(types.map { |t| ENUM_TYPES[t] }, obj)
     end
 
-    # @param type [String] a property type string
+    # @param type [Symbol] a property type string
     # @param obj [Hash] the property object in schema format
     # @return [Symbol] an obj-c property type
     def process_simple_type(type, obj)
       case type
-      when "boolean", "number"
-        return self.optional ? :number_obj : type.to_sym
+      when :boolean, :number
+        return self.optional ? :number_obj : type
 
-      when "integer"
+      when :integer
         return :number_obj if self.optional
         (obj["minimum"] && obj["minimum"] >= 0) ? :unsigned : :integer
 
-      when "null"
+      when :null
         @optional = true
         return :id
 
-      when nil
-        raise UndefinedTypeError
-
       else
-        return type.to_sym
+        return type
       end
     end
 
@@ -131,9 +140,9 @@ module Nidyx
     # @return [Symbol] an obj-c property type
     def process_array_type(type, obj)
       # if the key is optional
-      if type.include?("null")
+      if type.include?(:null)
         @optional = true
-        type -= ["null"]
+        type -= [:null]
       end
 
       # single optional type
