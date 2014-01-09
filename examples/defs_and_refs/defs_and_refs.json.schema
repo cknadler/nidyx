@@ -12,7 +12,7 @@
         "obj": {
           "type": "object",
           "properties": {
-            "id": { "type": "string" },
+            "tag": { "type": "string" },
             "data": { "$ref": "#/definitions/obj" }
           }
         }
