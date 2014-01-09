@@ -1,4 +1,5 @@
 require "minitest/autorun"
+require "nidyx"
 require "nidyx/property"
 
 class TestProperty < Minitest::Test
@@ -12,6 +13,12 @@ class TestProperty < Minitest::Test
     assert_equal(true, make_simple_property("string").is_obj?)
     assert_equal(true, make_simple_property("object").is_obj?)
     assert_equal(true, make_simple_property("null").is_obj?)
+  end
+
+  def test_name_camelized
+    obj = { "type" => "string" }
+    p = Nidyx::Property.new("underscore_string", nil, obj, false)
+    assert_equal("underscoreString", p.name)
   end
 
   def test_simple_array
@@ -185,6 +192,12 @@ class TestProperty < Minitest::Test
     obj = { "enum" => [1, 2] }
     p = Nidyx::Property.new("i", nil, obj, false)
     assert_equal(:integer, p.type)
+  end
+
+  def test_string_enum
+    obj = { "enum" => ["a", "b"] }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:string, p.type)
   end
 
   def test_typed_optional_enum

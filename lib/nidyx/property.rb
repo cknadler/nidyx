@@ -11,7 +11,7 @@ module Nidyx
     # @param obj [Hash] the property object in schema format
     # @param optional [Boolean] true if the property can be null or empty
     def initialize(name, class_name, obj, optional)
-      @name = name
+      @name = name.camelize(false)
       @optional = optional
       @type = process_json_type(obj)
       @attributes = ATTRIBUTES[@type]

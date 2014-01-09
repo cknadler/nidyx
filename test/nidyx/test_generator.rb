@@ -293,15 +293,15 @@ class TestGenerator < Minitest::Test
       "definitions" => {
         "object" => {
           "type" => "object",
-          "required" => [ "value" ],
+          "required" => [ "int_value" ],
           "properties" => {
-            "value" => { "type" => "integer" }
+            "int_value" => { "type" => "integer" }
           }
         },
         "other_object" => {
           "type" => "object",
           "properties" => {
-            "value" => { "type" => "string" }
+            "string_value" => { "type" => "string" }
           }
         }
       }
@@ -331,8 +331,8 @@ class TestGenerator < Minitest::Test
     model = models["TSTObjectModel"]
     props = model[:h].properties
 
-    value = props.shift
-    assert_equal(:integer, value.type)
+    int_value = props.shift
+    assert_equal(:integer, int_value.type)
 
     ###
     # other object model
@@ -340,8 +340,9 @@ class TestGenerator < Minitest::Test
     model = models["TSTOtherObjectModel"]
     props = model[:h].properties
 
-    value = props.shift
-    assert_equal(:string, value.type)
+    string_value = props.shift
+    assert_equal(:string, string_value.type)
+    assert_equal("stringValue", string_value.name)
   end
 
   def test_unsupported_items_type_error
