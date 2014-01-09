@@ -26,16 +26,19 @@ module Nidyx
 
     private
 
+    PRIMITIVE_ATTRIBUTES = "(assign, nonatomic)"
+    OBJECT_ATTRIBUTES = "(strong, nonatomic)"
+
     ATTRIBUTES = {
-      :array      => "(strong, nonatomic)",
-      :boolean    => "(assign, nonatomic)",
-      :integer    => "(assign, nonatomic)",
-      :unsigned   => "(assign, nonatomic)",
-      :number     => "(nonatomic)",
-      :number_obj => "(strong, nonatomic)",
-      :string     => "(strong, nonatomic)",
-      :object     => "(strong, nonatomic)",
-      :id         => "(strong, nonatomic)"
+      :array      => OBJECT_ATTRIBUTES,
+      :boolean    => PRIMITIVE_ATTRIBUTES,
+      :integer    => PRIMITIVE_ATTRIBUTES,
+      :unsigned   => PRIMITIVE_ATTRIBUTES,
+      :number     => PRIMITIVE_ATTRIBUTES,
+      :number_obj => OBJECT_ATTRIBUTES,
+      :string     => OBJECT_ATTRIBUTES,
+      :object     => OBJECT_ATTRIBUTES,
+      :id         => OBJECT_ATTRIBUTES
     }
 
     # :object intentionally omitted
