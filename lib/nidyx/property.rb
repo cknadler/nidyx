@@ -66,11 +66,12 @@ module Nidyx
       FalseClass => :boolean
     }
 
-    OBJECTS = [ :array, :number_obj, :string, :object, :id ]
+    OBJECTS = Set.new([ :array, :number_obj, :string, :object, :id ])
 
-    BOXABLE_NUMBERS = [ :boolean, :integer, :number ]
+    SIMPLE_NUMBERS = Set.new([ :integer, :number ])
 
-    SIMPLE_NUMBERS = [ :integer, :number ]
+    BOXABLE_NUMBERS = Set.new(SIMPLE_NUMBERS + [ :boolean ])
+
 
     # @param type [Symbol] an obj-c property type
     # @param class_name [String] an object's type name
@@ -88,7 +89,8 @@ module Nidyx
       type = obj["type"]
       if type.is_a?(Array)
         raise UndefinedTypeError if !type || type.empty?
-        return process_array_type(type_array_to_sym(type), obj)
+        types = Set.new(type_array_to_sym(type))
+        return process_array_type(types, obj)
       else
         raise UndefinedTypeError unless type
         return process_simple_type(type.to_sym, obj)
@@ -105,13 +107,16 @@ module Nidyx
     # @param obj [Hash] the property object in schema format
     # @return [Symbol] an obj-c property type
     def process_enum_type(enum, obj)
+      # type checks
       raise NonArrayEnumError unless enum.is_a?(Array)
       raise EmptyEnumError if enum.empty?
 
+      # map enum to a set of types
       types = enum.map { |a| a.class }.uniq
       raise UnsupportedEnumTypeError unless (types & [ Array, Hash ]).empty?
+      types = Set.new(types.map { |t| ENUM_TYPES[t] })
 
-      process_array_type(types.map { |t| ENUM_TYPES[t] }, obj)
+      process_array_type(types, obj)
     end
 
     # @param type [Symbol] a property type string
@@ -135,7 +140,7 @@ module Nidyx
       end
     end
 
-    # @param type [Array] an array of property types
+    # @param type [Set] an array of property types
     # @param obj [Hash] the property object in schema format
     # @return [Symbol] an obj-c property type
     def process_array_type(type, obj)
@@ -146,11 +151,11 @@ module Nidyx
       end
 
       # single optional type
-      return process_simple_type(type.shift, obj) if type.size == 1
+      return process_simple_type(type.to_a.shift, obj) if type.size == 1
 
       # conjoined number types
-      return :number if (type - SIMPLE_NUMBERS).empty? && !@optional
-      return :number_obj if (type - BOXABLE_NUMBERS).empty?
+      return :number if type.subset?(SIMPLE_NUMBERS) && !@optional
+      return :number_obj if type.subset?(BOXABLE_NUMBERS)
 
       :id
     end
