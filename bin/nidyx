@@ -14,7 +14,7 @@ require "nidyx/output"
 BANNER = <<END
 usage: nidyx [-h] [--version]
        nidyx <schema> <class-prefix> [output-directory]
-             [-j] [-x] [-a author] [-c company] [-p project]
+             [-j] [-n] [-a author] [-c company] [-p project]
 
 END
 

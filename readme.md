@@ -8,15 +8,15 @@ models with [JSONModel](https://github.com/icanzilb/JSONModel) support.
 ## Usage
 
 ```
-$ nidyx
 usage: nidyx [-h] [--version]
        nidyx <schema> <class-prefix> [output-directory]
-             [-j] [-a author] [-c company] [-p project]
+             [-j] [-n] [-a author] [-c company] [-p project]
 
-    -j, --json-model                 Generate with JSONModel support
     -a, --author AUTHOR              Author's name
     -c, --company COMPANY            Company's name
     -p, --project PROJECT            Project's name
+    -j, --json-model                 Generate with JSONModel support
+    -n, --no-comments                Generate without header comments
     -h, --help                       Print usage information
         --version                    Print version
 
