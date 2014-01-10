@@ -112,6 +112,10 @@ begin
 rescue JSON::JSONError
   puts "Invalid JSON read from #{ARGV[0]}"
   exit 1
+rescue StandardError => e
+  puts "Cant read schema file..."
+  puts e
+  exit 1
 end
 
 # Run generator and print models
