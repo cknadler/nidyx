@@ -171,7 +171,7 @@ module Nidyx
     # @return [String, nil] the getter override string if necessary
     def process_getter_override(name)
       FORBIDDEN_PROPERTY_PREFIXES.each do |p|
-        return ", get#{name.camelize}" if name.match(/^#{p}.*/)
+        return ", getter=get#{name.camelize}" if name.match(/^#{p}.*/)
       end
 
       nil

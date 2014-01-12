@@ -234,7 +234,7 @@ class TestProperty < Minitest::Test
   def test_unsafe_getter
     obj = { "type" => "integer" }
     p = Nidyx::Property.new("newInt", nil, obj, false)
-    assert_equal(", getNewInt", p.getter_override)
+    assert_equal(", getter=getNewInt", p.getter_override)
   end
 
   def test_typeless
