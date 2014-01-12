@@ -12,8 +12,6 @@ module Nidyx
   module Generator
     extend self
 
-    class UnsupportedItemsTypeError < StandardError; end
-
     # Generates Nidyx::ModelH and Nidyx::ModelM pairs from JSON Schema. Models
     # are returned in the following format:
     #
@@ -42,6 +40,7 @@ module Nidyx
     private
 
     REF_KEY = "$ref"
+    CLASS_NAME_KEY = "className"
 
     # Generate a ModelH / ModelM pair.
     # @param path [Hash] the path in the schema of the model to be generated
@@ -82,16 +81,15 @@ module Nidyx
     def generate_property(key, path, model, optional)
       obj = resolve_reference(path)
       type = obj["type"]
-      cname = obj["class_name"]
+      class_name = obj[CLASS_NAME_KEY]
 
-      case type
-      when "object"
-        model.imports << cname
-      when "array"
+      if include_type?(type, "object") && obj["properties"]
+        model.imports << class_name unless model.imports.include?(class_name)
+      elsif include_type?(type, "array")
         resolve_array_refs(obj)
       end
 
-      Nidyx::Property.new(key, cname, obj, optional)
+      Nidyx::Property.new(key, class_name, obj, optional)
     end
 
     # Given a path, which could be at any part of a reference chain, resolve
@@ -123,10 +121,10 @@ module Nidyx
 
       # If we are dealing with an object, encode it's class name into the
       # schema and generate it's model if necessary.
-      if obj["type"] == "object"
-        cname = class_name_from_path(@class_prefix, path)
-        obj["class_name"] = cname
-        generate_model(path, cname) unless @models.include?(cname)
+      if include_type?(obj["type"], "object") && obj["properties"]
+        class_name = class_name_from_path(@class_prefix, path)
+        obj[CLASS_NAME_KEY] = class_name_from_path(@class_prefix, path)
+        generate_model(path, class_name) unless @models.include?(class_name)
       end
 
       obj
@@ -142,8 +140,6 @@ module Nidyx
         items.each { |i| resolve_reference_string(i[REF_KEY]) }
       when Hash
         resolve_reference_string(items[REF_KEY])
-      else
-        raise UnsupportedItemsTypeError
       end
     end
 
@@ -173,6 +169,13 @@ module Nidyx
     # @return true if the property is optional
     def is_optional?(key, required_keys)
       !(required_keys && required_keys.include?(key))
+    end
+
+    # @param type_obj [Array, String] the JSON Schema type
+    # @param type [String] a string type to test
+    # @param true if the string type is a valid type according type object
+    def include_type?(type_obj, type)
+      type_obj.is_a?(Array) ? type_obj.include?(type) : type_obj == type
     end
   end
 end

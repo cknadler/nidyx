@@ -1,5 +1,6 @@
 module Nidyx
   module Common
+    class NoObjectAtPathError < StandardError; end
 
     CLASS_SUFFIX = "Model"
     IGNORED_KEYS = "properties", "definitions"
@@ -28,7 +29,15 @@ module Nidyx
 
     def object_at_path(path, schema)
       obj = schema
-      path.each { |p| obj = obj[p] }
+
+      begin
+        path.each { |p| obj = obj[p] }
+      rescue
+        raise NoObjectAtPathError, path
+      end
+
+      raise NoObjectAtPathError, path unless obj
+
       obj
     end
   end

@@ -62,4 +62,19 @@ class TestCommon < Minitest::Test
     obj = object_at_path(["definitions", "obj", "properties", "count"], schema)
     assert_equal("integer", obj["type"])
   end
+
+  def test_object_at_path_raises
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value" => { "type" => "string" }
+      }
+    }
+
+    assert_raises(Nidyx::Common::NoObjectAtPathError) do
+      object_at_path(["bad", "path"], schema)
+    end
+
+  end
+
 end

@@ -125,7 +125,7 @@ module Nidyx
     def process_simple_type(type, obj)
       case type
       when :boolean, :number
-        return self.optional ? :number_obj : type
+        self.optional ? :number_obj : type
 
       when :integer
         return :number_obj if self.optional
@@ -133,10 +133,13 @@ module Nidyx
 
       when :null
         @optional = true
-        return :id
+        :id
+
+      when :object
+        obj["properties"] ? :object : :id
 
       else
-        return type
+        type
       end
     end
 

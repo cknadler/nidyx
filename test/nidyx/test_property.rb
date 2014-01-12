@@ -126,8 +126,12 @@ class TestProperty < Minitest::Test
   end
 
   def test_simple_object
-    obj = { "type" => "object" }
-    p = Nidyx::Property.new("i", nil, obj, false)
+    obj = {
+      "type" => "object",
+      "properties" => {}
+    }
+
+    p = Nidyx::Property.new("i", "ClassName", obj, false)
     assert_equal(:object, p.type)
     assert_equal(false, p.optional)
   end
@@ -218,6 +222,12 @@ class TestProperty < Minitest::Test
     obj = { "type" => [ "integer" ] }
     p = Nidyx::Property.new("i", nil, obj, false)
     assert_equal(:integer, p.type)
+  end
+
+  def test_anonymous_object
+    obj = { "type" => "object" }
+    p = Nidyx::Property.new("i", nil, obj, false)
+    assert_equal(:id, p.type)
   end
 
   def test_typeless

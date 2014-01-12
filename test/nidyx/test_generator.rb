@@ -345,20 +345,63 @@ class TestGenerator < Minitest::Test
     assert_equal("stringValue", string_value.name)
   end
 
-  def test_unsupported_items_type_error
+  def test_array_type_object
     schema = {
       "type" => "object",
       "properties" => {
         "value" => {
-          "type" => "array",
-          "items" => ""
+          "type" => ["object", "null"],
+          "properties" => {
+            "value" => {
+              "type" => "string"
+            }
+          }
         }
       }
     }
 
-    assert_raises(Nidyx::Generator::UnsupportedItemsTypeError) do
-      run_generate(schema)
-    end
+    models = run_generate(schema)
+
+    model = models["TSTModel"]
+    props = model[:h].properties
+    value = props.shift
+    assert_equal("TSTValueModel", value.type_name)
+
+    model = models["TSTValueModel"]
+    props = model[:h].properties
+    value = props.shift
+    assert_equal("value", value.name)
+  end
+
+  def test_anonymous_object
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value" => { "type" => "object" }
+      }
+    }
+
+    models = run_generate(schema)
+    model = models["TSTModel"]
+    props = model[:h].properties
+    value = props.shift
+    assert_equal(true, model[:h].imports.empty?)
+    assert_equal(:id, value.type)
+  end
+
+  def test_anonymous_array
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value" => { "type" => "array" }
+      }
+    }
+
+    models = run_generate(schema)
+    model = models["TSTModel"]
+    props = model[:h].properties
+    value = props.shift
+    assert_equal(:array, value.type)
   end
 
   private
