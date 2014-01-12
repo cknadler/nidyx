@@ -2,7 +2,8 @@ require "set"
 
 module Nidyx
   class Property
-    attr_reader :name, :attributes, :type, :type_name, :desc, :optional
+    attr_reader :name, :attributes, :type, :type_name,
+      :desc, :optional, :getter_override
 
     class UndefinedTypeError < StandardError; end
     class NonArrayEnumError < StandardError; end
@@ -15,6 +16,7 @@ module Nidyx
     # @param optional [Boolean] true if the property can be null or empty
     def initialize(name, class_name, obj, optional)
       @name = name.camelize(false)
+      @getter_override = process_getter_override(name)
       @optional = optional
       @type = process_json_type(obj)
       @attributes = ATTRIBUTES[@type]
@@ -29,8 +31,8 @@ module Nidyx
 
     private
 
-    PRIMITIVE_ATTRIBUTES = "(assign, nonatomic)"
-    OBJECT_ATTRIBUTES = "(strong, nonatomic)"
+    PRIMITIVE_ATTRIBUTES = "assign, nonatomic"
+    OBJECT_ATTRIBUTES = "strong, nonatomic"
 
     ATTRIBUTES = {
       :array      => OBJECT_ATTRIBUTES,
@@ -66,12 +68,14 @@ module Nidyx
       FalseClass => :boolean
     }
 
-    OBJECTS = Set.new([ :array, :number_obj, :string, :object, :id ])
 
-    SIMPLE_NUMBERS = Set.new([ :integer, :number ])
+    OBJECTS = Set.new [ :array, :number_obj, :string, :object, :id ]
 
-    BOXABLE_NUMBERS = Set.new(SIMPLE_NUMBERS + [ :boolean ])
+    SIMPLE_NUMBERS = Set.new [ :integer, :number ]
 
+    BOXABLE_NUMBERS = Set.new SIMPLE_NUMBERS + [ :boolean ]
+
+    FORBIDDEN_PROPERTY_PREFIXES = [ "new", "copy" ]
 
     # @param type [Symbol] an obj-c property type
     # @param class_name [String] an object's type name
@@ -90,10 +94,10 @@ module Nidyx
       if type.is_a?(Array)
         raise UndefinedTypeError if !type || type.empty?
         types = Set.new(type_array_to_sym(type))
-        return process_array_type(types, obj)
+        process_array_type(types, obj)
       else
         raise UndefinedTypeError unless type
-        return process_simple_type(type.to_sym, obj)
+        process_simple_type(type.to_sym, obj)
       end
     end
 
@@ -161,6 +165,16 @@ module Nidyx
       return :number_obj if type.subset?(BOXABLE_NUMBERS)
 
       :id
+    end
+
+    # @param name [String] the property name
+    # @return [String, nil] the getter override string if necessary
+    def process_getter_override(name)
+      FORBIDDEN_PROPERTY_PREFIXES.each do |p|
+        return ", get#{name.camelize}" if name.match(/^#{p}.*/)
+      end
+
+      nil
     end
   end
 end

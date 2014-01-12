@@ -25,6 +25,7 @@ class TestProperty < Minitest::Test
     obj = { "type" => "array" }
     p = Nidyx::Property.new("arr", nil, obj, false)
     assert_equal(:array, p.type)
+    assert_equal(nil, p.getter_override)
   end
 
   def test_explicit_optional_array
@@ -228,6 +229,12 @@ class TestProperty < Minitest::Test
     obj = { "type" => "object" }
     p = Nidyx::Property.new("i", nil, obj, false)
     assert_equal(:id, p.type)
+  end
+
+  def test_unsafe_getter
+    obj = { "type" => "integer" }
+    p = Nidyx::Property.new("newInt", nil, obj, false)
+    assert_equal(", getNewInt", p.getter_override)
   end
 
   def test_typeless

@@ -6,7 +6,7 @@
 {{#desc}}
 // {{desc}}
 {{/desc}}
-@property {{attributes}} {{type_name}}{{#json_model}}{{#optional}}<Optional>{{/optional}}{{/json_model}} {{#is_obj?}}*{{/is_obj?}}{{name}};
+@property ({{attributes}}{{getter_override}}) {{type_name}}{{#json_model}}{{#optional}}<Optional>{{/optional}}{{/json_model}} {{#is_obj?}}*{{/is_obj?}}{{name}};
 {{/properties}}
 
 @end
