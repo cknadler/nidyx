@@ -59,7 +59,7 @@ module Nidyx
       required_properties = get_object(path)["required"]
       properties_path = path + ["properties"]
 
-      get_object(properties_path).each do |key, obj|
+      get_object(properties_path).each do |key, _|
         optional = is_optional?(key, required_properties)
         property_path = properties_path + [key]
         model.properties << generate_property(key, property_path, model, optional)
