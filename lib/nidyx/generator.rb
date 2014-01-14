@@ -117,7 +117,7 @@ module Nidyx
 
       # If we find an immediate reference, chase it and pass the immediate
       # object as a parent.
-      return resolve_reference(Nidyx::Pointer.new(ref).path, obj) if ref
+      return resolve_reference_string(ref) if ref
 
       # If we are dealing with an object, encode it's class name into the
       # schema and generate it's model if necessary.
