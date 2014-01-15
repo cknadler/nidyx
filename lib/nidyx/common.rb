@@ -19,14 +19,6 @@ module Nidyx
       prefix + name + CLASS_SUFFIX
     end
 
-    def header_path(name)
-      name + ".h"
-    end
-
-    def implementation_path(name)
-      name + ".m"
-    end
-
     def object_at_path(path, schema)
       obj = schema
 

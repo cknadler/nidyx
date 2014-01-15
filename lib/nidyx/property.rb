@@ -2,26 +2,28 @@ require "set"
 
 module Nidyx
   class Property
+    attr_reader :name, :class_name, :optional, :type, :description, :enum,
+      :minimum
 
     class UndefinedTypeError < StandardError; end
     class NonArrayEnumError < StandardError; end
     class EmptyEnumError < StandardError; end
-
-    attr_reader :name, :class_name, :type, :description, :enum,
-      :minimum, :maximum, :optional
 
     def initialize(name, class_name, optional, obj)
       @name = name.camelize(false)
       @class_name = class_name
       @optional = optional
       @type = process_type(obj["type"])
+      @description = obj["description"]
+      @enum = obj["enum"]
       @minimum = obj["minimum"]
-      @maximum = obj["maximum"]
       @properties = obj["properties"]
 
       # type checks
-      raise NonArrayEnumError unless @enum.is_a?(Array)
-      raise EmptyEnumError if @enum.empty?
+      if @enum
+        raise NonArrayEnumError unless @enum.is_a?(Array)
+        raise EmptyEnumError if @enum.empty?
+      end
     end
 
     def has_properties?
@@ -33,17 +35,11 @@ module Nidyx
     def process_type(type)
       if type.is_a?(Array)
         raise UndefinedTypeError if type.empty?
-        Set.new(array_to_sym(type))
+        Set.new(type.map { |t| t.to_sym })
       else
         raise UndefinedTypeError unless type
         type.to_sym
       end
-    end
-
-    # @param array [Array] an array of strings
-    # @return an array of symbols
-    def array_to_sym(array)
-      array.map { |i| i.to_sym }
     end
   end
 end

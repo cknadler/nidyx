@@ -32,7 +32,7 @@ class TestCoreExt < Minitest::Test
     assert_equal("123121151", "123121151".camelize(false))
   end
 
-  def test_camelize_leaves_original_in_tact
+  def test_camelize_not_destructive
     string = "camel_case_string"
     assert_equal("CamelCaseString", string.camelize)
     assert_equal("camel_case_string", string)

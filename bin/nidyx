@@ -47,11 +47,18 @@ END
 # defaults
 options = {
   :comments => true,
-  :platform => "objc"
+  :platform => "objc",
+  :objc => {
+    :json_model => false
+  }
 }
 
 opts = OptionParser.new do |o|
   o.banner = BANNER
+
+  ###
+  # general generation options
+  ###
 
   o.on("-a", "--author AUTHOR", "Author's name") do |a|
     options[:author] = a
@@ -65,13 +72,21 @@ opts = OptionParser.new do |o|
     options[:project] = p
   end
 
-  o.on("-j", "--json-model", "Generate with JSONModel support") do |j|
-    options[:json_model] = j
-  end
-
   o.on("-n", "--no-comments", "Generate without header comments") do |n|
     options[:comments] = false
   end
+
+  ###
+  # objc generation options
+  ###
+
+  o.on("-j", "--json-model", "Generate with JSONModel support") do |j|
+    options[:objc][:json_model] = true
+  end
+
+  ###
+  # other
+  ###
 
   o.on("-h", "--help", "Print usage information") do
     puts o

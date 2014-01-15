@@ -1,15 +1,15 @@
 require "minitest/autorun"
 require "nidyx" # we use some core_ext stuff that requires this
-require "nidyx/generator"
+require "nidyx/parser"
 
-class TestGenerator < Minitest::Test
+class TestParser < Minitest::Test
   def test_empty_schema
     schema = { "type" => "object" }
 
     begin
-      run_generate(schema)
+      parse(schema)
       assert(false)
-    rescue EmptySchemaError
+    rescue Nidyx::Parser::EmptySchemaError
       assert(true)
     end
   end
@@ -21,44 +21,27 @@ class TestGenerator < Minitest::Test
         "key" => {
           "description" => "a description",
           "type" => "string"
-        }
+        },
+        "value" => { "type" => "integer" }
       }
     }
 
-    models = run_generate(schema)
-    model = models["TSTModel"]
-    props = model[:h].properties
-
-    assert_equal("a description", props.shift.desc)
-  end
-
-  def test_simple_properties
-    schema = {
-      "type" => "object",
-      "properties" => {
-        "key" => { "type" => "string" },
-        "value" => { "type" => "string" }
-      }
-    }
-
-    models = run_generate(schema)
-    model = validate_model_files(models, "TSTModel", [])
-
-    # properties
-    props = model[:h].properties
+    models = parse(schema)
+    props = models["TSModel"].properties
 
     key = props.shift
+    assert_equal("a description", key.description)
+    assert_equal(:string, key.type)
     assert_equal("key", key.name)
-    assert_equal("NSString", key.type_name)
-    assert_equal(nil, key.desc)
+    assert_equal(true, key.optional)
 
     value = props.shift
+    assert_equal(:integer, value.type)
     assert_equal("value", value.name)
-    assert_equal("NSString", value.type_name)
-    assert_equal(nil, value.desc)
+    assert_equal(true, value.optional)
   end
 
-  def test_deeply_nested_properties
+  def test_nested_properties
     schema = {
       "type" => "object",
       "properties" => {
@@ -70,7 +53,6 @@ class TestGenerator < Minitest::Test
             "obj" => {
               "type" => "object",
               "properties" => {
-                "id" => { "type" => "string" },
                 "data" => { "type" => "string" }
               }
             }
@@ -79,55 +61,47 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
+    models = parse(schema)
 
     ###
     # root model
     ###
-    model = validate_model_files(models, "TSTModel", ["TSTValueModel"])
-
-    # properties
-    props = model[:h].properties
+    model = models["TSModel"]
+    assert_deps(%w(TSValueModel), model)
+    props = model.properties
 
     key = props.shift
     assert_equal("key", key.name)
-    assert_equal("NSString", key.type_name)
+    assert_equal(:string, key.type)
 
     value = props.shift
     assert_equal("value", value.name)
-    assert_equal("TSTValueModel", value.type_name)
+    assert_equal(:object, value.type)
+    assert_equal("TSValueModel", value.class_name)
+    assert_equal(true, value.has_properties?)
 
     ###
     # value model
     ###
-    model = validate_model_files(models, "TSTValueModel", ["TSTValueObjModel"])
-
-    # properties
-    props = model[:h].properties
+    model = models["TSValueModel"]
+    assert_deps(%w(TSValueObjModel), model)
+    props = model.properties
 
     name = props.shift
     assert_equal("name", name.name)
-    assert_equal("NSString", name.type_name)
+    assert_equal(:string, name.type)
 
     obj = props.shift
     assert_equal("obj", obj.name)
-    assert_equal("TSTValueObjModel", obj.type_name)
+    assert_equal(:object, obj.type)
+    assert_equal("TSValueObjModel", obj.class_name)
 
     ###
     # value obj model
     ###
-    model = validate_model_files(models, "TSTValueObjModel", [])
-
-    # properties
-    props = model[:h].properties
-
-    id = props.shift
-    assert_equal("id", id.name)
-    assert_equal("NSString", id.type_name)
-
-    data = props.shift
+    data = models["TSValueObjModel"].properties.shift
     assert_equal("data", data.name)
-    assert_equal("NSString", data.type_name)
+    assert_equal(:string, data.type)
   end
 
   def test_definitions
@@ -148,35 +122,33 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
+    models = parse(schema)
 
     ###
     # root model
     ###
-    model = validate_model_files(models, "TSTModel", ["TSTObjModel"])
-
-    # properties
-    props = model[:h].properties
+    model = models["TSModel"]
+    assert_deps(%w(TSObjModel), model)
+    props = model.properties
 
     value = props.shift
     assert_equal("value", value.name)
-    assert_equal("TSTObjModel", value.type_name)
+    assert_equal(:object, value.type)
+    assert_equal("TSObjModel", value.class_name)
 
     ###
     # obj model
     ###
-    model = validate_model_files(models, "TSTObjModel", [])
-
-    # properties
-    props = model[:h].properties
+    model = models["TSObjModel"]
+    props = model.properties
 
     banner = props.shift
     assert_equal("banner", banner.name)
-    assert_equal("NSString", banner.type_name)
+    assert_equal(:string, banner.type)
 
     count = props.shift
     assert_equal("count", count.name)
-    assert_equal("NSNumber", count.type_name)
+    assert_equal(:integer, count.type)
   end
 
   def test_unsigned_integer
@@ -195,18 +167,20 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
-    model = models["TSTModel"]
-    props = model[:h].properties
+    models = parse(schema)
+    props = models["TSModel"].properties
 
     value = props.shift
-    assert_equal("NSNumber", value.type_name)
+    assert_equal(:integer, value.type)
+    assert_equal(0, value.minimum)
 
     larger = props.shift
-    assert_equal("NSUInteger", larger.type_name)
+    assert_equal(:integer, larger.type)
+    assert_equal(100, larger.minimum)
+    assert_equal(false, larger.optional)
   end
 
-  def test_chained_refs
+  def test_simple_chained_refs
     schema = {
       "type" => "object",
       "properties" => {
@@ -218,12 +192,14 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
-    model = models["TSTModel"]
-    props = model[:h].properties
+    models = parse(schema)
+    model = models["TSModel"]
+    assert_deps([], model)
+    props = model.properties
 
     value1 = props.shift
-    assert_equal("NSString", value1.type_name)
+    assert_equal(:string, value1.type)
+    assert_equal("value1", value1.name)
   end
 
   def test_chained_refs_to_an_object
@@ -243,31 +219,32 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
+    models = parse(schema)
 
     ###
     # root model
     ###
-    model = models["TSTModel"]
-    props = model[:h].properties
+    model = models["TSModel"]
+    assert_deps(%w(TSValue3Model), model)
+    props = model.properties
 
     value1 = props.shift
-    assert_equal("TSTValue3Model", value1.type_name)
+    assert_equal("value1", value1.name)
+    assert_equal(:object, value1.type)
+    assert_equal("TSValue3Model", value1.class_name)
 
     ###
     # mid ref
     ###
-    model = models["TSTValue2Model"] # this should never exist
-    assert_equal(nil, model)
+    assert_equal(nil, models["TSValue2Model"]) # should never exist
 
     ###
     # end ref
     ###
-    model = models["TSTValue3Model"]
-    props = model[:h].properties
-
+    props = models["TSValue3Model"].properties
     value4 = props.shift
-    assert_equal("NSString", value4.type_name)
+    assert_equal("value4", value4.name)
+    assert_equal(:string, value4.type)
   end
 
   def test_array_lookups
@@ -276,7 +253,7 @@ class TestGenerator < Minitest::Test
       "properties" => {
         "string_array" => {
           "type" => "array",
-          "items" => [ "string", "null" ]
+          "items" => ["string", "null"]
         },
         "object_array" => {
           "type" => "array",
@@ -293,7 +270,7 @@ class TestGenerator < Minitest::Test
       "definitions" => {
         "object" => {
           "type" => "object",
-          "required" => [ "int_value" ],
+          "required" => ["int_value"],
           "properties" => {
             "int_value" => { "type" => "integer" }
           }
@@ -307,70 +284,71 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
+    models = parse(schema)
     assert_equal(3, models.size)
 
     ###
     # root model
     ###
-    model = models["TSTModel"]
-    props = model[:h].properties
+    model = models["TSModel"]
+    props = model.properties
 
     string_array = props.shift
-    assert_equal("NSArray", string_array.type_name)
+    assert_equal(:array, string_array.type)
 
     object_array = props.shift
-    assert_equal("NSArray", object_array.type_name)
+    assert_equal(:array, object_array.type)
 
     multi_object_array = props.shift
-    assert_equal("NSArray", multi_object_array.type_name)
+    assert_equal(:array, multi_object_array.type)
 
     ###
     # object model
     ###
-    model = models["TSTObjectModel"]
-    props = model[:h].properties
+    model = models["TSObjectModel"]
+    props = model.properties
 
     int_value = props.shift
     assert_equal(:integer, int_value.type)
+    assert_equal("intValue", int_value.name)
 
     ###
     # other object model
     ###
-    model = models["TSTOtherObjectModel"]
-    props = model[:h].properties
+    model = models["TSOtherObjectModel"]
+    props = model.properties
 
     string_value = props.shift
     assert_equal(:string, string_value.type)
     assert_equal("stringValue", string_value.name)
   end
 
-  def test_array_type_object
+  def test_object_with_type_array
     schema = {
       "type" => "object",
       "properties" => {
         "value" => {
           "type" => ["object", "null"],
           "properties" => {
-            "value" => {
-              "type" => "string"
-            }
+            "value" => { "type" => "string" }
           }
         }
       }
     }
 
-    models = run_generate(schema)
+    models = parse(schema)
+    model = models["TSModel"]
+    props = model.properties
 
-    model = models["TSTModel"]
-    props = model[:h].properties
     value = props.shift
-    assert_equal("TSTValueModel", value.type_name)
+    assert_equal(Set.new([:object, :null]), value.type)
+    assert_equal("TSValueModel", value.class_name)
 
-    model = models["TSTValueModel"]
-    props = model[:h].properties
+    model = models["TSValueModel"]
+    props = model.properties
     value = props.shift
     assert_equal("value", value.name)
+    assert_equal(:string, value.type)
   end
 
   def test_anonymous_object
@@ -381,12 +359,13 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
-    model = models["TSTModel"]
-    props = model[:h].properties
+    models = parse(schema)
+    model = models["TSModel"]
+    props = model.properties
     value = props.shift
-    assert_equal(true, model[:h].imports.empty?)
-    assert_equal(:id, value.type)
+    assert_equal(true, model.dependencies.empty?)
+    assert_equal(:object, value.type)
+    assert_equal(false, value.has_properties?)
   end
 
   def test_anonymous_array
@@ -397,37 +376,24 @@ class TestGenerator < Minitest::Test
       }
     }
 
-    models = run_generate(schema)
-    model = models["TSTModel"]
-    props = model[:h].properties
+    models = parse(schema)
+    model = models["TSModel"]
+    props = model.properties
     value = props.shift
     assert_equal(:array, value.type)
   end
 
   private
 
-  CLASS_PREFIX = "TST"
+  PREFIX = "TS"
   OPTIONS = {}
 
-  def run_generate(schema)
-    Nidyx::Generator.spawn(CLASS_PREFIX, OPTIONS, schema)
+  def assert_deps(expected, model)
+    actual = model.dependencies
+    assert_equal(Set.new(expected), actual)
   end
 
-  # Do basic validation of a class's `.h` and `.m` file
-  # Return the model for further validation once this is complete
-  def validate_model_files(models, name, header_imports)
-    model = models[name]
-
-    # header
-    assert_equal(name, model[:h].name)
-    assert_equal(name + ".h", model[:h].file_name)
-    assert_equal(header_imports, model[:h].imports)
-
-    # implementation
-    assert_equal(name, model[:m].name)
-    assert_equal(name + ".m", model[:m].file_name)
-    assert_equal([name], model[:m].imports)
-
-    model
+  def parse(schema)
+    Nidyx::Parser.parse(PREFIX, OPTIONS, schema)
   end
 end

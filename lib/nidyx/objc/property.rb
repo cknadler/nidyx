@@ -1,22 +1,19 @@
 require "set"
 
 module Nidyx
-  class Property
+  class ObjCProperty
     attr_reader :name, :attributes, :type, :type_name,
       :desc, :optional, :getter_override
 
-    # @param name [String] property name
-    # @param class_name [String] class name, only for object properties
-    # @param obj [Hash] the property object in schema format
-    # @param optional [Boolean] true if the property can be null or empty
-    def initialize(name, class_name, obj, optional)
-      @name = name.camelize(false)
+    # @param property [Property] generic property
+    def initialize(property)
+      @name = property.name
       @getter_override = process_getter_override(name)
-      @optional = optional
-      @type = process_json_type(obj)
+      @optional = property.optional
+      @type = process_type(property)
       @attributes = ATTRIBUTES[@type]
-      @type_name = lookup_type_name(@type, class_name)
-      @desc = obj["description"]
+      @type_name = lookup_type_name(@type, property.class_name)
+      @desc = property.description
     end
 
     # @return [Boolean] true if the obj-c property type is an object
@@ -41,6 +38,7 @@ module Nidyx
       :id         => OBJECT_ATTRIBUTES
     }
 
+    # Objective-C types
     # :object intentionally omitted
     TYPES = {
       :array      => "NSArray",
@@ -63,14 +61,13 @@ module Nidyx
       FalseClass => :boolean
     }
 
+    OBJECTS = Set.new [:array, :number_obj, :string, :object, :id]
 
-    OBJECTS = Set.new [ :array, :number_obj, :string, :object, :id ]
+    SIMPLE_NUMBERS = Set.new [:integer, :number]
 
-    SIMPLE_NUMBERS = Set.new [ :integer, :number ]
+    BOXABLE_NUMBERS = SIMPLE_NUMBERS << :boolean
 
-    BOXABLE_NUMBERS = Set.new SIMPLE_NUMBERS + [ :boolean ]
-
-    FORBIDDEN_PROPERTY_PREFIXES = [ "new", "copy" ]
+    FORBIDDEN_PROPERTY_PREFIXES = ["new", "copy"]
 
     # @param type [Symbol] an obj-c property type
     # @param class_name [String] an object's type name
@@ -79,28 +76,25 @@ module Nidyx
       type == :object ? class_name : TYPES[type]
     end
 
-    # @param obj [Hash] the property object in schema format
+    # @param property [Property] generic property
     # @return [Symbol] an obj-c property type
-    def process_json_type(obj)
-      enum = obj["enum"]
-      return process_enum_type(enum, obj) if enum
+    def process_type(property)
+      return process_enum_type(property) if property.enum
 
-      type = obj["type"]
+      type = property.type
       if type.is_a?(Array)
-        raise UndefinedTypeError if !type || type.empty?
-        types = Set.new(type_array_to_sym(type))
-        process_array_type(types, obj)
+        process_array_type(type, property)
       else
-        raise UndefinedTypeError unless type
-        process_simple_type(type.to_sym, obj)
+        process_simple_type(type, property)
       end
     end
 
 
-    # @param enum [Array] an array of possible property values
-    # @param obj [Hash] the property object in schema format
+    # @param property [Property] generic property
     # @return [Symbol] an obj-c property type
-    def process_enum_type(enum, obj)
+    def process_enum_type(property)
+      enum = property.enum
+
       # type checks
       raise NonArrayEnumError unless enum.is_a?(Array)
       raise EmptyEnumError if enum.empty?
@@ -110,27 +104,27 @@ module Nidyx
       raise UnsupportedEnumTypeError unless (types & [ Array, Hash ]).empty?
       types = Set.new(types.map { |t| ENUM_TYPES[t] })
 
-      process_array_type(types, obj)
+      process_array_type(types, property)
     end
 
     # @param type [Symbol] a property type string
-    # @param obj [Hash] the property object in schema format
+    # @param property [Property] generic property
     # @return [Symbol] an obj-c property type
-    def process_simple_type(type, obj)
+    def process_simple_type(type, property)
       case type
       when :boolean, :number
         self.optional ? :number_obj : type
 
       when :integer
         return :number_obj if self.optional
-        (obj["minimum"] && obj["minimum"] >= 0) ? :unsigned : :integer
+        (property.minimum && property.minimum >= 0) ? :unsigned : :integer
 
       when :null
         @optional = true
         :id
 
       when :object
-        obj["properties"] ? :object : :id
+        property.has_properties? ? :object : :id
 
       else
         type
@@ -138,21 +132,21 @@ module Nidyx
     end
 
     # @param type [Set] an array of property types
-    # @param obj [Hash] the property object in schema format
+    # @param property [Property] generic property
     # @return [Symbol] an obj-c property type
-    def process_array_type(type, obj)
+    def process_array_type(types, property)
       # if the key is optional
-      if type.include?(:null)
+      if types.include?(:null)
         @optional = true
         type -= [:null]
       end
 
       # single optional type
-      return process_simple_type(type.to_a.shift, obj) if type.size == 1
+      return process_simple_type(types.to_a.shift, property) if types.size == 1
 
       # conjoined number types
-      return :number if type.subset?(SIMPLE_NUMBERS) && !@optional
-      return :number_obj if type.subset?(BOXABLE_NUMBERS)
+      return :number if types.subset?(SIMPLE_NUMBERS) && !@optional
+      return :number_obj if types.subset?(BOXABLE_NUMBERS)
 
       :id
     end

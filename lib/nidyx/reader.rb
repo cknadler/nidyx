@@ -1,13 +1,16 @@
 require 'json'
 
 module Nidyx
-  module SchemaReader
+  module Reader
     extend self
 
+    # Reads JSON from a file
+    # @param path [String] path of the file to read
+    # @return [Hash] the parsed JSON
     def read(path)
       begin
         # TODO: validate this is legitimate JSON Schema
-        return JSON.parse(IO.read(path))
+        JSON.parse(IO.read(path))
       rescue JSON::JSONError
         puts "Invalid JSON read from #{path}"
         exit 1

@@ -1,13 +1,12 @@
 require "nidyx/common"
-require "nidyx/model_h"
-require "nidyx/model_m"
 require "nidyx/property"
 require "nidyx/pointer"
+require "nidyx/model"
 
 include Nidyx::Common
 
 module Nidyx
-  module SchemaParser
+  module Parser
     extend self
 
     class EmptySchemaError < StandardError; end
@@ -16,13 +15,17 @@ module Nidyx
     # @param options [Hash] global application options
     # @param schema [Hash] JSON Schema
     # @return [Array] an array of ModelData objects
-    def parse(class_prefix, options, schema)
-      @class_prefix = class_prefix
-      @options = options
+    def parse(model_prefix, options, schema)
       raise EmptySchemaError if empty_schema?(schema)
+
+      # parser globals
+      @class_prefix = model_prefix
+      @options = options
       @schema = schema
       @models = {}
-      generate_model([], class_name(@class_prefix, nil))
+
+      # run model generation
+      generate([], class_name(@class_prefix, nil))
       @models
     end
 
@@ -31,36 +34,20 @@ module Nidyx
     REF_KEY = "$ref"
     CLASS_NAME_KEY = "className"
 
-    # Generate a ModelH / ModelM pair.
-    # @param path [Hash] the path in the schema of the model to be generated
-    # @param name [String] the model's name (for model lookup)
-    def generate_model(path, name)
-      @models[name] = {}
-      generate_h(path, name)
-      generate_m(name)
-    end
-
-    # Generates a ModelH and adds it to the models array.
+    # Generates a Model and adds it to the models array.
     # @param path [Array] the path to an object in the schema
     # @param name [String] raw model name
-    def generate_h(path, name)
-      model = Nidyx::ModelH.new(name, @options)
+    def generate(path, name)
+      @models[name] = model = Nidyx::Model.new(name)
+
       required_properties = get_object(path)["required"]
       properties_path = path + ["properties"]
 
-      get_object(properties_path).each do |key, _|
+      get_object(properties_path).keys.each do |key|
         optional = is_optional?(key, required_properties)
         property_path = properties_path + [key]
         model.properties << generate_property(key, property_path, model, optional)
       end
-
-      @models[name][:h] = model
-    end
-
-    # Generates a ModelM and adds it to the models array.
-    # @param name [String] raw model name
-    def generate_m(name)
-      @models[name][:m] = Nidyx::ModelM.new(name, @options)
     end
 
     # @param key [String] the key of the property in the JSON Schema
@@ -73,12 +60,12 @@ module Nidyx
       class_name = obj[CLASS_NAME_KEY]
 
       if include_type?(type, "object") && obj["properties"]
-        model.imports << class_name unless model.imports.include?(class_name)
+        model.dependencies << class_name
       elsif include_type?(type, "array")
         resolve_array_refs(obj)
       end
 
-      Nidyx::Property.new(key, class_name, obj, optional)
+      Nidyx::Property.new(key, class_name, optional, obj)
     end
 
     # Given a path, which could be at any part of a reference chain, resolve
@@ -113,7 +100,7 @@ module Nidyx
       if include_type?(obj["type"], "object") && obj["properties"]
         class_name = class_name_from_path(@class_prefix, path)
         obj[CLASS_NAME_KEY] = class_name_from_path(@class_prefix, path)
-        generate_model(path, class_name) unless @models.include?(class_name)
+        generate(path, class_name) unless @models.has_key?(class_name)
       end
 
       obj

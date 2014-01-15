@@ -21,16 +21,6 @@ class TestCommon < Minitest::Test
     assert_equal("DKModel", class_name_from_path("DK", []))
   end
 
-  def test_header_path
-    name = "DKModel"
-    assert_equal(name + ".h", header_path(name))
-  end
-
-  def test_implementation_path
-    name = "DKModel"
-    assert_equal(name + ".m", implementation_path(name))
-  end
-
   def test_object_at_path
     schema = {
       "type" => "object",
@@ -41,12 +31,8 @@ class TestCommon < Minitest::Test
         "obj" => {
           "type" => "object",
           "properties" => {
-            "name" => {
-              "type" => "string"
-            },
-            "count" => {
-              "type" => "integer"
-            }
+            "name" => { "type" => "string" },
+            "count" => { "type" => "integer" }
           }
         }
       }
@@ -74,7 +60,5 @@ class TestCommon < Minitest::Test
     assert_raises(Nidyx::Common::NoObjectAtPathError) do
       object_at_path(["bad", "path"], schema)
     end
-
   end
-
 end
