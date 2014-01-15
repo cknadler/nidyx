@@ -1,11 +1,9 @@
 #!/usr/bin/env ruby
 
 require "optparse"
-require "json"
 require "nidyx"
 require "nidyx/version"
 require "nidyx/generator"
-require "nidyx/output"
 
 ###
 # help text
@@ -48,7 +46,8 @@ END
 
 # defaults
 options = {
-  :comments => true
+  :comments => true,
+  :platform => "objc"
 }
 
 opts = OptionParser.new do |o|
@@ -98,26 +97,13 @@ end
 if ARGV.size < 2
   puts "Too few arguments." unless ARGV.empty?
   puts opts
-  exit
-end
-
-###
-# generator
-###
-
-# Attempt to parse ARGV[0] as a file containing JSON. If anything fails, bail.
-begin
-  # TODO: validate this is legitimate JSON Schema
-  schema = JSON.parse(IO.read(ARGV[0]))
-rescue JSON::JSONError
-  puts "Invalid JSON read from #{ARGV[0]}"
-  exit 1
-rescue StandardError => e
-  puts "Cant read schema file..."
-  puts e
   exit 1
 end
 
-# Run generator and print models
-models = Nidyx::Generator.spawn(ARGV[1], options, schema)
-Nidyx::Output.write(models, ARGV[2])
+options[:output_path] = ARGV[2]
+
+###
+# run
+###
+
+Nidyx::Generator.run(ARGV[0], ARGV[1], options)
