@@ -383,6 +383,60 @@ class TestParser < Minitest::Test
     assert_equal(:array, value.type)
   end
 
+  def test_model_name_override
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "value" => {
+          "type" => "object",
+          "className" => "something",
+          "properties" => {
+            "name" => { "$ref" => "#/definitions/obj" }
+          }
+        }
+      },
+      "definitions" => {
+        "obj" => {
+          "type" => "object",
+          "className" => "somethingElse",
+          "properties" => {
+            "stars" => { "type" => "integer" }
+          }
+        }
+      }
+    }
+
+    models = parse(schema)
+    assert_equal(3, models.size)
+
+    ###
+    # root model
+    ###
+    model = models["TSModel"]
+    props = model.properties
+
+    value = props.shift
+    assert_equal("TSSomethingModel", value.class_name)
+
+    ###
+    # something model
+    ###
+    model = models["TSSomethingModel"]
+    props = model.properties
+
+    name = props.shift
+    assert_equal("TSSomethingElseModel", name.class_name)
+
+    ###
+    # something else model
+    ###
+    model = models["TSSomethingElseModel"]
+    props = model.properties
+
+    stars = props.shift
+    assert_equal(:integer, stars.type)
+  end
+
   private
 
   PREFIX = "TS"

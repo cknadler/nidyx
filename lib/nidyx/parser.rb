@@ -31,8 +31,16 @@ module Nidyx
 
     private
 
-    REF_KEY = "$ref"
-    CLASS_NAME_KEY = "className"
+    # Schema key definitions
+    REF          = "$ref"
+    TYPE         = "type"
+    REQUIRED     = "required"
+    PROPERTIES   = "properties"
+    CLASS_NAME   = "className"
+    OBJECT       = "object"
+    ARRAY        = "array"
+    ITEMS        = "items"
+    DERIVED_NAME = "_name"
 
     # Generates a Model and adds it to the models array.
     # @param path [Array] the path to an object in the schema
@@ -40,8 +48,8 @@ module Nidyx
     def generate(path, name)
       @models[name] = model = Nidyx::Model.new(name)
 
-      required_properties = get_object(path)["required"]
-      properties_path = path + ["properties"]
+      required_properties = get_object(path)[REQUIRED]
+      properties_path = path + [PROPERTIES]
 
       get_object(properties_path).keys.each do |key|
         optional = is_optional?(key, required_properties)
@@ -56,12 +64,11 @@ module Nidyx
     # @param optional [Boolean] true if the property can be empty or null
     def generate_property(key, path, model, optional)
       obj = resolve_reference(path)
-      type = obj["type"]
-      class_name = obj[CLASS_NAME_KEY]
+      class_name = obj[DERIVED_NAME]
 
-      if include_type?(type, "object") && obj["properties"]
+      if include_type?(obj, OBJECT) && obj[PROPERTIES]
         model.dependencies << class_name
-      elsif include_type?(type, "array")
+      elsif include_type?(obj, ARRAY)
         resolve_array_refs(obj)
       end
 
@@ -87,7 +94,7 @@ module Nidyx
     # it's parents and an optional key `class_name`.
     def resolve_reference(path, parent = nil)
       obj = get_object(path)
-      ref = obj[REF_KEY]
+      ref = obj[REF]
 
       # TODO: merge parent and obj into obj (destructive)
 
@@ -97,10 +104,15 @@ module Nidyx
 
       # If we are dealing with an object, encode it's class name into the
       # schema and generate it's model if necessary.
-      if include_type?(obj["type"], "object") && obj["properties"]
-        class_name = class_name_from_path(@class_prefix, path)
-        obj[CLASS_NAME_KEY] = class_name_from_path(@class_prefix, path)
-        generate(path, class_name) unless @models.has_key?(class_name)
+      if include_type?(obj, OBJECT) && obj[PROPERTIES]
+        name = if obj[CLASS_NAME]
+                 class_name(@class_prefix, obj[CLASS_NAME])
+               else
+                class_name_from_path(@class_prefix, path)
+               end
+
+        obj[DERIVED_NAME] = name
+        generate(path, name) unless @models.has_key?(name)
       end
 
       obj
@@ -110,12 +122,12 @@ module Nidyx
     # definition.
     # @param obj [Hash] the array property schema
     def resolve_array_refs(obj)
-      items = obj["items"]
+      items = obj[ITEMS]
       case items
       when Array
-        items.each { |i| resolve_reference_string(i[REF_KEY]) }
+        items.each { |i| resolve_reference_string(i[REF]) }
       when Hash
-        resolve_reference_string(items[REF_KEY])
+        resolve_reference_string(items[REF])
       end
     end
 
@@ -130,7 +142,7 @@ module Nidyx
     # @param schema [Hash] an object containing JSON schema
     # @return [Boolean] true if the schema is empty
     def empty_schema?(schema)
-      props = schema["properties"]
+      props = schema[PROPERTIES]
       !props || props.empty?
     end
 
@@ -150,7 +162,8 @@ module Nidyx
     # @param type_obj [Array, String] the JSON Schema type
     # @param type [String] a string type to test
     # @param true if the string type is a valid type according type object
-    def include_type?(type_obj, type)
+    def include_type?(obj, type)
+      type_obj = obj[TYPE]
       type_obj.is_a?(Array) ? type_obj.include?(type) : type_obj == type
     end
   end
