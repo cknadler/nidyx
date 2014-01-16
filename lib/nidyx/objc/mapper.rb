@@ -37,9 +37,9 @@ module Nidyx
     end
 
     def map_protocol_definitions(interface)
-      protocol_defs = Set.new
+      protocol_defs = []
       interface.properties.each { |p| protocol_defs += p.protocols }
-      protocol_defs -= IGNORED_PROTOCOLS
+      protocol_defs = (protocol_defs - IGNORED_PROTOCOLS).uniq
     end
   end
 end
