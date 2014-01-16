@@ -131,7 +131,7 @@ module Nidyx
     # @return [Boolean] true if the schema is empty
     def empty_schema?(schema)
       props = schema["properties"]
-      props == nil || props.empty?
+      !props || props.empty?
     end
 
     # @param path [Array] the path to an object in the global schema

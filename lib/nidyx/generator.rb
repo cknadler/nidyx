@@ -11,7 +11,7 @@ module Nidyx
       schema = Nidyx::Reader.read(schema_path)
       raw_models = Nidyx::Parser.parse(model_prefix, schema, options)
       models = Nidyx::Mapper.map(raw_models, options)
-      Nidyx::Output.write(models)
+      Nidyx::Output.write(models, options[:output_path])
     end
   end
 end

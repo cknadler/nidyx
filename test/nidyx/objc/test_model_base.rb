@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require "nidyx/model_base"
+require "nidyx/objc/model_base"
 
 class TestModelBase < Minitest::Test
 
@@ -10,7 +10,7 @@ class TestModelBase < Minitest::Test
   }
 
   def test_empty_options
-    model = Nidyx::ModelBase.new("ModelName", {})
+    model = Nidyx::ObjCModelBase.new("ModelName", {})
     assert_equal("ModelName", model.name)
     assert_equal(ENV['USER'], model.author)
     assert_equal(ENV['USER'], model.owner)
@@ -18,7 +18,7 @@ class TestModelBase < Minitest::Test
   end
 
   def test_full_options
-    model = Nidyx::ModelBase.new("ModelName", MOCK_OPTS)
+    model = Nidyx::ObjCModelBase.new("ModelName", MOCK_OPTS)
     assert_equal("test_author", model.author)
     assert_equal("test_company", model.owner)
     assert_equal("test_project", model.project)

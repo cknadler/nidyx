@@ -1,7 +1,7 @@
 require "nidyx/objc/model_base"
 
 module Nidyx
-  class ObjCImplementation < ObjCModelBase
+  class ObjCInterface < ObjCModelBase
     attr_accessor :properties
     attr_reader :json_model
 

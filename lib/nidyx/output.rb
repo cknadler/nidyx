@@ -6,16 +6,16 @@ module Nidyx
     # @param dir [String] output directory, defaults to current directory
     def write(models, dir)
       path = dir || Dir.getwd
-      models.each { |_, model| write_file(path, model) }
+      models.each { |m| write_file(model, path) }
     end
 
     private
 
-    # @param path [String] output directory
     # @param model [Hash] all of the files for a specific model, stored in
+    # @param path [String] output directory
     # a hash by extension
-    def write_file(path, model)
-      model.each do |_, file|
+    def write_file(model, path)
+      model.files.each do |file|
         File.open(File.join(path, file.file_name), "w") do |f|
           f.puts file.render
         end
