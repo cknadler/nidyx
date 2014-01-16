@@ -47,7 +47,6 @@ module Nidyx
       :array      => OBJECT_ATTRIBUTES,
       :boolean    => PRIMITIVE_ATTRIBUTES,
       :integer    => PRIMITIVE_ATTRIBUTES,
-      :unsigned   => PRIMITIVE_ATTRIBUTES,
       :number     => PRIMITIVE_ATTRIBUTES,
       :number_obj => OBJECT_ATTRIBUTES,
       :string     => OBJECT_ATTRIBUTES,
@@ -61,7 +60,6 @@ module Nidyx
       :array      => "NSArray",
       :boolean    => "BOOL",
       :integer    => "NSInteger",
-      :unsigned   => "NSUInteger",
       :number     => "double",
       :number_obj => "NSNumber",
       :string     => "NSString",
@@ -125,12 +123,8 @@ module Nidyx
     # @return [Symbol] an obj-c property type
     def process_simple_type(type, property)
       case type
-      when :boolean, :number
+      when :boolean, :number, :integer
         @optional ? :number_obj : type
-
-      when :integer
-        return :number_obj if @optional
-        (property.minimum && property.minimum >= 0) ? :unsigned : :integer
 
       when :null
         @optional = true

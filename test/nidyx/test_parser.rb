@@ -151,35 +151,6 @@ class TestParser < Minitest::Test
     assert_equal(:integer, count.type)
   end
 
-  def test_unsigned_integer
-    schema = {
-      "type" => "object",
-      "required" => ["larger"],
-      "properties" => {
-        "value" => {
-          "type" => "integer",
-          "minimum" => 0
-        },
-        "larger" => {
-          "type" => "integer",
-          "minimum" => 100
-        }
-      }
-    }
-
-    models = parse(schema)
-    props = models["TSModel"].properties
-
-    value = props.shift
-    assert_equal(:integer, value.type)
-    assert_equal(0, value.minimum)
-
-    larger = props.shift
-    assert_equal(:integer, larger.type)
-    assert_equal(100, larger.minimum)
-    assert_equal(false, larger.optional)
-  end
-
   def test_simple_chained_refs
     schema = {
       "type" => "object",

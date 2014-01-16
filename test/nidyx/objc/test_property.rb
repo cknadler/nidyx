@@ -73,12 +73,6 @@ class TestObjCProperty < Minitest::Test
     assert_equal(["Optional"], p.protocols)
   end
 
-  def test_unsigned
-    obj = { "type" => "integer", "minimum" => 0 }
-    p = property(obj, false)
-    assert_equal(:unsigned, p.type)
-  end
-
   def test_number
     obj = { "type" => "number" }
     p = property(obj, false)
