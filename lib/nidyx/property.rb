@@ -13,17 +13,11 @@ module Nidyx
       @name = name.camelize(false)
       @class_name = class_name
       @optional = optional
-      @type = process_type(obj["type"])
-      @description = obj["description"]
       @enum = obj["enum"]
+      @type = process_type(obj["type"], @enum)
+      @description = obj["description"]
       @minimum = obj["minimum"]
       @properties = obj["properties"]
-
-      # type checks
-      if @enum
-        raise NonArrayEnumError unless @enum.is_a?(Array)
-        raise EmptyEnumError if @enum.empty?
-      end
     end
 
     def has_properties?
@@ -32,13 +26,21 @@ module Nidyx
 
     private
 
-    def process_type(type)
-      if type.is_a?(Array)
+    def process_type(type, enum)
+      if enum
+        raise NonArrayEnumError unless @enum.is_a?(Array)
+        raise EmptyEnumError if @enum.empty?
+        return
+      end
+
+      case type
+      when Array
         raise UndefinedTypeError if type.empty?
         Set.new(type.map { |t| t.to_sym })
-      else
-        raise UndefinedTypeError unless type
+      when String
         type.to_sym
+      else
+        raise UndefinedTypeError
       end
     end
   end

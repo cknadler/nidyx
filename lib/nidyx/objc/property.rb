@@ -5,6 +5,8 @@ module Nidyx
     attr_reader :name, :attributes, :type, :type_name,
       :desc, :optional, :getter_override
 
+    class UnsupportedEnumTypeError < StandardError; end
+
     # @param property [Property] generic property
     def initialize(property)
       @name = property.name
@@ -94,10 +96,6 @@ module Nidyx
     # @return [Symbol] an obj-c property type
     def process_enum_type(property)
       enum = property.enum
-
-      # type checks
-      raise NonArrayEnumError unless enum.is_a?(Array)
-      raise EmptyEnumError if enum.empty?
 
       # map enum to a set of types
       types = enum.map { |a| a.class }.uniq
