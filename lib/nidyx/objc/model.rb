@@ -6,7 +6,7 @@ module Nidyx
     end
 
     def files
-      [@interface, @implemenatation]
+      [@interface, @implementation]
     end
   end
 end

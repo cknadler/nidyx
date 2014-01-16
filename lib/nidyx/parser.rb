@@ -12,10 +12,10 @@ module Nidyx
     class EmptySchemaError < StandardError; end
 
     # @param model_prefix [String] the prefix for model names
-    # @param options [Hash] global application options
     # @param schema [Hash] JSON Schema
+    # @param options [Hash] global application options
     # @return [Array] an array of ModelData objects
-    def parse(model_prefix, options, schema)
+    def parse(model_prefix, schema, options)
       raise EmptySchemaError if empty_schema?(schema)
 
       # parser globals

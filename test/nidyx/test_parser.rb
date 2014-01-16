@@ -394,6 +394,6 @@ class TestParser < Minitest::Test
   end
 
   def parse(schema)
-    Nidyx::Parser.parse(PREFIX, OPTIONS, schema)
+    Nidyx::Parser.parse(PREFIX, schema, OPTIONS)
   end
 end

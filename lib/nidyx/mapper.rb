@@ -11,7 +11,7 @@ module Nidyx
     def map(models, options)
       models = models.values
       case options[:platform].downcase
-      when "objc", "objective-c"
+      when "objc", "obj-c", "objective-c"
         Nidyx::ObjCMapper.map(models, options)
       end
     end

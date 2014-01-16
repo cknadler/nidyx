@@ -6,7 +6,7 @@ module Nidyx
     # @param dir [String] output directory, defaults to current directory
     def write(models, dir)
       path = dir || Dir.getwd
-      models.each { |m| write_file(model, path) }
+      models.each { |model| write_file(model, path) }
     end
 
     private
