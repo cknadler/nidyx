@@ -15,6 +15,13 @@
             "tag": { "type": "string" },
             "data": { "$ref": "#/definitions/obj" }
           }
+        },
+        "arr": {
+          "type": "array",
+          "items": [
+            { "$ref": "#/definitions/obj" },
+            { "$ref": "#/definitions/other_object" }
+          ]
         }
       }
     }
@@ -30,6 +37,13 @@
         "content": {
           "type": ["string", "null"]
         }
+      }
+    },
+    "other_object": {
+      "type": "object",
+      "required": ["data"],
+      "properties": {
+        "data": { "type": "string" }
       }
     }
   }

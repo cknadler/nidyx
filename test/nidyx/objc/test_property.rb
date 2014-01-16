@@ -23,18 +23,21 @@ class TestObjCProperty < Minitest::Test
     p = property(obj, false)
     assert_equal(:array, p.type)
     assert_equal(nil, p.getter_override)
+    assert_equal([], p.protocols)
+    assert_equal(false, p.has_protocols?)
 
     # optional array
     p = property(obj, true)
     assert_equal(:array, p.type)
-    assert_equal(true, p.optional)
+    assert_equal(["Optional"], p.protocols)
+    assert_equal(true, p.has_protocols?)
   end
 
   def test_typed_optional_array
     obj = { "type" => ["array", "null"] }
     p = property(obj, false)
     assert_equal(:array, p.type)
-    assert_equal(true, p.optional)
+    assert_equal(["Optional"], p.protocols)
   end
 
   def test_boolean
@@ -60,14 +63,14 @@ class TestObjCProperty < Minitest::Test
 
     p = property(obj, true)
     assert_equal(:number_obj, p.type)
-    assert_equal(true, p.optional)
+    assert_equal(["Optional"], p.protocols)
   end
 
   def test_typed_optional_integer
     obj = { "type" => ["integer", "null"] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
-    assert_equal(true, p.optional)
+    assert_equal(["Optional"], p.protocols)
   end
 
   def test_unsigned
@@ -126,7 +129,7 @@ class TestObjCProperty < Minitest::Test
     obj = { "type" => ["number", "integer", "boolean", "null"] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
-    assert_equal(true, p.optional)
+    assert_equal(["Optional"], p.protocols)
   end
 
   def test_multiple_disparate_types
@@ -163,7 +166,7 @@ class TestObjCProperty < Minitest::Test
 
     p = property(obj, true)
     assert_equal(:number_obj, p.type)
-    assert_equal(true, p.optional)
+    assert_equal(["Optional"], p.protocols)
   end
 
   def test_string_enum
@@ -176,7 +179,7 @@ class TestObjCProperty < Minitest::Test
     obj = { "enum" => [1, 2, nil] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
-    assert_equal(true, p.optional)
+    assert_equal(["Optional"], p.protocols)
   end
 
   def test_single_element_array_type
@@ -195,6 +198,23 @@ class TestObjCProperty < Minitest::Test
     obj = { "type" => "integer" }
     p = Nidyx::ObjCProperty.new(Nidyx::Property.new("newInt", nil, false, obj))
     assert_equal(", getter=getNewInt", p.getter_override)
+  end
+
+  def test_protocols
+    obj = {
+      "type" => "array",
+      "collectionTypes" => ["SomeModel", "OtherModel"]
+    }
+
+    p = property(obj, false)
+    assert_equal(true, p.has_protocols?)
+    assert_equal("SomeModel, OtherModel", p.protocols_string)
+    assert_equal(%w(SomeModel OtherModel), p.protocols)
+
+    p = property(obj, true)
+    assert_equal(true, p.has_protocols?)
+    assert_equal("SomeModel, OtherModel, Optional", p.protocols_string)
+    assert_equal(%w(SomeModel OtherModel Optional), p.protocols)
   end
 
   def test_unsupported_types_enum

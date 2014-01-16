@@ -2,25 +2,40 @@ require "set"
 
 module Nidyx
   class ObjCProperty
-    attr_reader :name, :attributes, :type, :type_name,
-      :desc, :optional, :getter_override
+    attr_reader :name, :attributes, :type, :type_name, :desc, :getter_override,
+                :protocols
 
     class UnsupportedEnumTypeError < StandardError; end
 
     # @param property [Property] generic property
     def initialize(property)
       @name = property.name
-      @getter_override = process_getter_override(name)
       @optional = property.optional
+      @desc = property.description
+
+      @getter_override = process_getter_override(name)
       @type = process_type(property)
       @attributes = ATTRIBUTES[@type]
       @type_name = lookup_type_name(@type, property.class_name)
-      @desc = property.description
+
+      @protocols = []
+      @protocols += property.collection_types if property.collection_types
+      @protocols << "Optional" if @optional
     end
 
     # @return [Boolean] true if the obj-c property type is an object
     def is_obj?
       OBJECTS.include?(self.type)
+    end
+
+    # @return [Boolean] true if the property has protocols
+    def has_protocols?
+      !@protocols.empty?
+    end
+
+    # @return [String] the property's protocols, comma separated
+    def protocols_string
+      @protocols.join(", ")
     end
 
     private
@@ -111,10 +126,10 @@ module Nidyx
     def process_simple_type(type, property)
       case type
       when :boolean, :number
-        self.optional ? :number_obj : type
+        @optional ? :number_obj : type
 
       when :integer
-        return :number_obj if self.optional
+        return :number_obj if @optional
         (property.minimum && property.minimum >= 0) ? :unsigned : :integer
 
       when :null
@@ -134,10 +149,7 @@ module Nidyx
     # @return [Symbol] an obj-c property type
     def process_array_type(types, property)
       # if the key is optional
-      if types.include?(:null)
-        @optional = true
-        types -= [:null]
-      end
+      @optional = true if types.delete?(:null)
 
       # single optional type
       return process_simple_type(types.to_a.shift, property) if types.size == 1

@@ -3,7 +3,7 @@ require "set"
 module Nidyx
   class Property
     attr_reader :name, :class_name, :optional, :type, :description, :enum,
-      :minimum
+      :minimum, :collection_types
 
     class UndefinedTypeError < StandardError; end
     class NonArrayEnumError < StandardError; end
@@ -18,6 +18,7 @@ module Nidyx
       @description = obj["description"]
       @minimum = obj["minimum"]
       @properties = obj["properties"]
+      @collection_types = obj["collectionTypes"]
     end
 
     def has_properties?

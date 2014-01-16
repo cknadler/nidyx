@@ -12,13 +12,42 @@ class TestCommon < Minitest::Test
   end
 
   def test_class_name_from_path
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "obj" => {
+          "type" => "object",
+          "className" => "notObject",
+          "properties" => {
+            "value" => {
+              "type" => "object",
+              "properties" => {
+                "tang" => { "type" => "integer" }
+              }
+            }
+          }
+        }
+      },
+      "definitions" => {
+        "obj" => {
+          "properties" => {
+            "wu" => { "type" => "integer" }
+          }
+        }
+      }
+    }
+
     path = ["properties", "obj", "properties", "value"]
-    assert_equal("DKObjValueModel", class_name_from_path("DK", path))
+    assert_equal("DKObjValueModel", class_name_from_path("DK", path, schema))
+    path = ["definitions", "obj"]
+    assert_equal("DKObjModel", class_name_from_path("DK", path, schema))
 
-    path = ["definitions", "obj", "properties", "value"]
-    assert_equal("DKObjValueModel", class_name_from_path("DK", path))
+    # overriden
+    path = ["properties", "obj"]
+    assert_equal("DKNotObjectModel", class_name_from_path("DK", path, schema))
 
-    assert_equal("DKModel", class_name_from_path("DK", []))
+    # empty
+    assert_equal("DKModel", class_name_from_path("DK", [], schema))
   end
 
   def test_object_at_path

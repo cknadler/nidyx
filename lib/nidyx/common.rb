@@ -13,10 +13,13 @@ module Nidyx
       end
     end
 
-    def class_name_from_path(prefix, path)
+    def class_name_from_path(prefix, path, schema)
+      override = object_at_path(path, schema)["className"]
+      return class_name(prefix, override) if override
+
       name = ""
-      path.each { |p| name += p.camelize unless IGNORED_KEYS.include?(p) }
-      prefix + name + CLASS_SUFFIX
+      path.each { |p| name << p.camelize unless IGNORED_KEYS.include?(p) }
+      class_name(prefix, name)
     end
 
     def object_at_path(path, schema)

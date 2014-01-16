@@ -32,15 +32,16 @@ module Nidyx
     private
 
     # Schema key definitions
-    REF          = "$ref"
-    TYPE         = "type"
-    REQUIRED     = "required"
-    PROPERTIES   = "properties"
-    CLASS_NAME   = "className"
-    OBJECT       = "object"
-    ARRAY        = "array"
-    ITEMS        = "items"
-    DERIVED_NAME = "_name"
+    REF              = "$ref"
+    TYPE             = "type"
+    REQUIRED         = "required"
+    PROPERTIES       = "properties"
+    CLASS_NAME       = "className"
+    OBJECT           = "object"
+    ARRAY            = "array"
+    ITEMS            = "items"
+    DERIVED_NAME     = "_name"
+    COLLECTION_TYPES = "collectionTypes"
 
     # Generates a Model and adds it to the models array.
     # @param path [Array] the path to an object in the schema
@@ -69,7 +70,7 @@ module Nidyx
       if include_type?(obj, OBJECT) && obj[PROPERTIES]
         model.dependencies << class_name
       elsif include_type?(obj, ARRAY)
-        resolve_array_refs(obj)
+         obj[COLLECTION_TYPES] = resolve_array_refs(obj)
       end
 
       Nidyx::Property.new(key, class_name, optional, obj)
@@ -91,7 +92,7 @@ module Nidyx
     # @param path [Array] the path to an object in the schema
     # @param parent [Hash, nil] the merged attributes of the parent reference chain
     # @return [Hash] a modified schema object with inherited attributes from
-    # it's parents and an optional key `class_name`.
+    # it's parents.
     def resolve_reference(path, parent = nil)
       obj = get_object(path)
       ref = obj[REF]
@@ -105,36 +106,43 @@ module Nidyx
       # If we are dealing with an object, encode it's class name into the
       # schema and generate it's model if necessary.
       if include_type?(obj, OBJECT) && obj[PROPERTIES]
-        name = if obj[CLASS_NAME]
-                 class_name(@class_prefix, obj[CLASS_NAME])
-               else
-                class_name_from_path(@class_prefix, path)
-               end
-
-        obj[DERIVED_NAME] = name
-        generate(path, name) unless @models.has_key?(name)
+        obj[DERIVED_NAME] = class_name_from_path(@class_prefix, path, @schema)
+        generate(path, obj[DERIVED_NAME]) unless @models.has_key?(obj[DERIVED_NAME])
       end
 
       obj
     end
 
     # Resolves any references burried in the `items` property of an array
-    # definition.
+    # definition. Returns a list of collection types in the array.
     # @param obj [Hash] the array property schema
+    # @return [Array] list of types in the array
     def resolve_array_refs(obj)
       items = obj[ITEMS]
+      types = []
+
       case items
       when Array
-        items.each { |i| resolve_reference_string(i[REF]) }
+        items.each do |i|
+          resolve_reference_string(i[REF])
+          types << class_name_from_ref(i[REF])
+        end
       when Hash
         resolve_reference_string(items[REF])
+        types << class_name_from_ref(items[REF])
       end
+
+      types.compact
+    end
+
+    def class_name_from_ref(ref)
+      class_name_from_path(@class_prefix, Nidyx::Pointer.new(ref).path, @schema) if ref
     end
 
     # Resolves a reference as a plain JSON Pointer string.
     # @param ref [String] reference in json pointer format
     # @return [Hash] a modified schema object with inherited attributes from
-    # it's parents and an optional key `class_name`.
+    # it's parents.
     def resolve_reference_string(ref)
       resolve_reference(Nidyx::Pointer.new(ref).path) if ref
     end

@@ -295,12 +295,15 @@ class TestParser < Minitest::Test
 
     string_array = props.shift
     assert_equal(:array, string_array.type)
+    assert_equal([], string_array.collection_types)
 
     object_array = props.shift
     assert_equal(:array, object_array.type)
+    assert_equal(["TSObjectModel"], object_array.collection_types)
 
     multi_object_array = props.shift
     assert_equal(:array, multi_object_array.type)
+    assert_equal(%w(TSObjectModel TSOtherObjectModel), multi_object_array.collection_types)
 
     ###
     # object model
