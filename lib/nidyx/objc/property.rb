@@ -98,7 +98,7 @@ module Nidyx
       enum = property.enum
 
       # map enum to a set of types
-      types = enum.map { |a| a.class }.uniq
+      types = enum.map { |a| a.class }
       raise UnsupportedEnumTypeError unless (types & [ Array, Hash ]).empty?
       types = Set.new(types.map { |t| ENUM_TYPES[t] })
 
