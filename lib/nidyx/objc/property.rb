@@ -67,7 +67,7 @@ module Nidyx
 
     SIMPLE_NUMBERS = Set.new [:integer, :number]
 
-    BOXABLE_NUMBERS = SIMPLE_NUMBERS << :boolean
+    BOXABLE_NUMBERS = SIMPLE_NUMBERS + [:boolean]
 
     FORBIDDEN_PROPERTY_PREFIXES = ["new", "copy"]
 
@@ -84,7 +84,7 @@ module Nidyx
       return process_enum_type(property) if property.enum
 
       type = property.type
-      if type.is_a?(Array)
+      if type.is_a?(Set)
         process_array_type(type, property)
       else
         process_simple_type(type, property)
@@ -136,7 +136,7 @@ module Nidyx
       # if the key is optional
       if types.include?(:null)
         @optional = true
-        type -= [:null]
+        types -= [:null]
       end
 
       # single optional type
