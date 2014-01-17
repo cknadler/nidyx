@@ -26,20 +26,11 @@ module Nidyx
 
     private
 
-    IGNORED_PROTOCOLS = ["Optional"]
-
     def map_interface(model, options)
       interface = Nidyx::ObjCInterface.new(model.name, options)
       interface.properties = model.properties.map { |p| Nidyx::ObjCProperty.new(p) }
-      interface.protocol_definitions = map_protocol_definitions(interface)
       interface.imports += model.dependencies.to_a
       interface
-    end
-
-    def map_protocol_definitions(interface)
-      protocol_defs = []
-      interface.properties.each { |p| protocol_defs += p.protocols }
-      protocol_defs = (protocol_defs - IGNORED_PROTOCOLS).uniq
     end
   end
 end

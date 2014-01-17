@@ -70,7 +70,8 @@ module Nidyx
       if include_type?(obj, OBJECT) && obj[PROPERTIES]
         model.dependencies << class_name
       elsif include_type?(obj, ARRAY)
-         obj[COLLECTION_TYPES] = resolve_array_refs(obj)
+        obj[COLLECTION_TYPES] = resolve_array_refs(obj)
+        model.dependencies += obj[COLLECTION_TYPES]
       end
 
       Nidyx::Property.new(key, class_name, optional, obj)

@@ -262,6 +262,7 @@ class TestParser < Minitest::Test
     # root model
     ###
     model = models["TSModel"]
+    assert_deps(%w(TSObjectModel TSOtherObjectModel), model)
     props = model.properties
 
     string_array = props.shift

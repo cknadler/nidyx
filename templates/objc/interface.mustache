@@ -1,12 +1,10 @@
 {{> top_info}}
 {{> imports}}
-{{#has_protocol_definitions?}}
-{{#protocol_definitions}}
-@protocol {{.}}
+{{#json_model}}
+@protocol {{name}}
 @end
 
-{{/protocol_definitions}}
-{{/has_protocol_definitions?}}
+{{/json_model}}
 @interface {{name}}{{#json_model}} : JSONModel{{/json_model}}
 
 {{#properties}}
