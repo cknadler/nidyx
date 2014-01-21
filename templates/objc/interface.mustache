@@ -5,7 +5,7 @@
 @end
 
 {{/json_model}}
-@interface {{name}}{{#json_model}} : JSONModel{{/json_model}}
+@interface {{name}}{{#json_model}} : JSONModel{{/json_model}}{{#mantle}} : MTLModel <MTLJSONSerializing> {{/mantle}}
 
 {{#properties}}
 {{#desc}}
