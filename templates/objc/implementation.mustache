@@ -2,4 +2,9 @@
 {{> imports}}
 @implementation {{name}}
 
+{{#mantle}}
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+    return nil;
+}
+{{/mantle}}
 @end

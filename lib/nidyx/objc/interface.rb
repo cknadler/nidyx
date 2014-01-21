@@ -17,7 +17,7 @@ module Nidyx
 
     EXT = "h"
     JSON_MODEL_IMPORT = "JSONModel"
-    MANTLE_IMPORT = "Mantle/Mantle.h"
+    MANTLE_IMPORT = "Mantle/Mantle"
 
     def add_json_model
       self.json_model = true
