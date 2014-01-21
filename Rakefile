@@ -10,7 +10,7 @@ task :examples do
   dirs.each do |example_dir|
     next if [".", ".."].include?(example_dir)
     Dir.chdir("examples/#{example_dir}") do
-      system("bundle exec nidyx *.json.schema Example -j -n")
+      system("./generate.sh")
     end
   end
 end
