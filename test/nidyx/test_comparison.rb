@@ -11,15 +11,19 @@ class TestComparison < Minitest::Test
   end
 
   def test_simple_properties
-    validate_files("simple_properties")
+    validate_files("simple_properties", :json_model)
   end
 
   def test_complex_properties
-    validate_files("complex_properties")
+    validate_files("complex_properties", :json_model)
   end
 
   def test_defs_and_refs
-    validate_files("defs_and_refs")
+    validate_files("defs_and_refs", :json_model)
+  end
+
+  def test_mantle
+    validate_files("mantle", :mantle)
   end
 
   private
@@ -29,19 +33,27 @@ class TestComparison < Minitest::Test
   EXAMPLES_PATH = File.join(ROOT, "examples")
   PREFIX = "Example"
 
-  def validate_files(example_name)
-    run_generate(example_name)
+  def validate_files(example_name, type)
+    run_generate(example_name, type)
 
     Dir.foreach(TMP_PATH) do |f|
       validate_file(example_name, f) unless [".", ".."].include?(f)
     end
   end
 
-  def run_generate(example_name)
-    res = system("bundle exec nidyx " +
-                 example_schema_path(example_name) +
-                 " #{PREFIX} #{TMP_PATH} -j -n")
-    assert(false) unless res
+  def run_generate(example_name, type)
+    cmd = "bundle exec nidyx " <<
+          example_schema_path(example_name) <<
+          " #{PREFIX} #{TMP_PATH} -n "
+
+    case type
+    when :json_model
+      cmd << "--json-model"
+    when :mantle
+      cmd << "--mantle"
+    end
+
+    assert(false) unless system(cmd)
   end
 
   def validate_file(ename, fname)
