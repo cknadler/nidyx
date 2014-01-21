@@ -2,7 +2,7 @@ require "nidyx/objc/model_base"
 
 module Nidyx
   class ObjCInterface < ObjCModelBase
-    attr_accessor :properties, :json_model, :mantle
+    attr_accessor :properties
 
     self.template_file = File.join(self.template_path, "interface.mustache")
 
@@ -13,6 +13,14 @@ module Nidyx
       add_mantle if options[:objc][:mantle]
     end
 
+    def json_model?
+      @json_model
+    end
+
+    def mantle?
+      @mantle
+    end
+
     private
 
     EXT = "h"
@@ -20,12 +28,12 @@ module Nidyx
     MANTLE_IMPORT = "Mantle/Mantle"
 
     def add_json_model
-      self.json_model = true
+      @json_model = true
       self.imports << JSON_MODEL_IMPORT
     end
 
     def add_mantle
-      self.mantle = true
+      @mantle = true
       self.imports << MANTLE_IMPORT
     end
   end
