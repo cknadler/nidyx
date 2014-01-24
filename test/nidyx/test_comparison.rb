@@ -29,15 +29,15 @@ class TestComparison < Minitest::Test
   EXAMPLES_PATH = File.join(ROOT, "examples")
   PREFIX = "Example"
 
-  def validate_files(example_name, type)
-    run_generate(example_name, type)
+  def validate_files(example_name)
+    run_generate(example_name)
 
     Dir.foreach(TMP_PATH) do |f|
       validate_file(example_name, f) unless [".", ".."].include?(f)
     end
   end
 
-  def run_generate(example_name, type)
+  def run_generate(example_name)
     cmd = "bundle exec nidyx " <<
           example_schema_path(example_name) <<
           " #{PREFIX} #{TMP_PATH} -n --json-model"
