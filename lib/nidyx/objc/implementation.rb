@@ -7,17 +7,10 @@ module Nidyx
     def initialize(name, options)
       super
       self.file_name = "#{name}.#{EXT}"
-      self.imports = []
-      add_json_model if options[:objc][:json_model]
-      self.imports << name
+      self.imports = [name]
     end
 
     private
     EXT = "m"
-    JSON_MODEL_IMPORT = "JSONModel"
-
-    def add_json_model
-      self.imports << JSON_MODEL_IMPORT
-    end
   end
 end
