@@ -1,11 +1,13 @@
 {{> top_info}}
 {{> imports}}
 {{#json_model?}}
+@protocol JSONModel;
+
 @protocol {{name}}
 @end
 
 {{/json_model?}}
-@interface {{name}}{{#json_model?}} : JSONModel{{/json_model?}}{{#mantle?}} : MTLModel <MTLJSONSerializing> {{/mantle?}}
+@interface {{name}}{{#json_model?}} : JSONModel{{/json_model?}}
 
 {{#properties}}
 {{#desc}}

@@ -11,19 +11,15 @@ class TestComparison < Minitest::Test
   end
 
   def test_simple_properties
-    validate_files("simple_properties", :json_model)
+    validate_files("simple_properties")
   end
 
   def test_complex_properties
-    validate_files("complex_properties", :json_model)
+    validate_files("complex_properties")
   end
 
   def test_defs_and_refs
-    validate_files("defs_and_refs", :json_model)
-  end
-
-  def test_mantle
-    validate_files("mantle", :mantle)
+    validate_files("defs_and_refs")
   end
 
   private
@@ -44,14 +40,7 @@ class TestComparison < Minitest::Test
   def run_generate(example_name, type)
     cmd = "bundle exec nidyx " <<
           example_schema_path(example_name) <<
-          " #{PREFIX} #{TMP_PATH} -n "
-
-    case type
-    when :json_model
-      cmd << "--json-model"
-    when :mantle
-      cmd << "--mantle"
-    end
+          " #{PREFIX} #{TMP_PATH} -n --json-model"
 
     assert(false) unless system(cmd)
   end

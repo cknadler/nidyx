@@ -12,7 +12,7 @@ require "nidyx/generator"
 BANNER = <<END
 usage: nidyx [-h] [--version]
        nidyx <schema> <class-prefix> [output-directory]
-             [--json-model] [--mantle] # objc
+             [--json-model] # objc specific
              [-n] [-a author] [-c company] [-p project]
 
 END
@@ -50,8 +50,7 @@ options = {
   :comments => true,
   :platform => "objc",
   :objc => {
-    :json_model => false,
-    :mantle => false
+    :json_model => false
   }
 }
 
@@ -84,10 +83,6 @@ opts = OptionParser.new do |o|
 
   o.on("--json-model", "Generate with JSONModel support") do |j|
     options[:objc][:json_model] = true
-  end
-
-  o.on("--mantle", "Generate with Mantle support") do |m|
-    options[:objc][:mantle] = true
   end
 
   ###

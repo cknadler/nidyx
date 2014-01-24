@@ -1,5 +1,6 @@
-#import "JSONModel.h"
 #import "ExampleObjectModel.h"
+
+@protocol JSONModel;
 
 @protocol ExampleModel
 @end
