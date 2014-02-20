@@ -12,8 +12,8 @@ require "nidyx/generator"
 BANNER = <<END
 usage: nidyx [-h] [--version]
        nidyx <schema> <class-prefix> [output-directory]
-             [--json-model] # objc specific
              [-n] [-a author] [-c company] [-p project]
+             [--json-model] # objc specific
 
 END
 

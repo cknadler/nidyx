@@ -8,24 +8,19 @@ module Nidyx
 
     def initialize(name, options)
       @name = name
-      @author = options[:author] || ENV['USER']
-      @owner = options[:company] || @author
+      @author = options[:author]
+      @owner = options[:company]
       @project = options[:project]
       @comments = options[:comments]
       @imports = []
-      @time = Time.now
-    end
-
-    def created_date
-      @time.strftime("%m/%d/%Y")
-    end
-
-    def created_year
-      @time.year
     end
 
     def has_imports?
-      !imports.empty?
+      !self.imports.empty?
+    end
+
+    def no_owner?
+      !self.owner
     end
   end
 end

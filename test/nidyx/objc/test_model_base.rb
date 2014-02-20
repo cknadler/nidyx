@@ -12,8 +12,8 @@ class TestModelBase < Minitest::Test
   def test_empty_options
     model = Nidyx::ObjCModelBase.new("ModelName", {})
     assert_equal("ModelName", model.name)
-    assert_equal(ENV['USER'], model.author)
-    assert_equal(ENV['USER'], model.owner)
+    assert_equal(nil, model.author)
+    assert_equal(nil, model.owner)
     assert_equal(nil, model.project)
   end
 
