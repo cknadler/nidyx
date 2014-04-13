@@ -11,16 +11,12 @@ module Nidyx
   module Parser
     extend self
 
-    class EmptySchemaError < StandardError; end
-
     # @param model_prefix [String] the prefix for model names
     # @param schema [Hash] JSON Schema
     # @param options [Hash] global application options
     # @return [Hash] a Hash of ModelData objects
     def parse(model_prefix, schema, options)
-      raise EmptySchemaError if empty_schema?(schema)
-
-      # parser globals
+      # setup parser
       @class_prefix = model_prefix
       @options = options
       @schema = schema
@@ -136,13 +132,6 @@ module Nidyx
     # it's parents.
     def resolve_reference_string(ref)
       resolve_reference(Nidyx::Pointer.new(ref).path) if ref
-    end
-
-    # @param schema [Hash] an object containing JSON schema
-    # @return [Boolean] true if the schema is empty
-    def empty_schema?(schema)
-      props = schema[PROPERTIES_KEY]
-      !props || props.empty?
     end
 
     # @param path [Array] the path to an object in the global schema

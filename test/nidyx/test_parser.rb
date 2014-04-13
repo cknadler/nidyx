@@ -3,17 +3,6 @@ require "nidyx" # we use some core_ext stuff that requires this
 require "nidyx/parser"
 
 class TestParser < Minitest::Test
-  def test_empty_schema
-    schema = { "type" => "object" }
-
-    begin
-      parse(schema)
-      assert(false)
-    rescue Nidyx::Parser::EmptySchemaError
-      assert(true)
-    end
-  end
-
   def test_description
     schema = {
       "type" => "object",
