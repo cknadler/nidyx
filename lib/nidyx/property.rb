@@ -1,4 +1,7 @@
 require "set"
+require "nidyx/parse_constants"
+
+include Nidyx::ParseConstants
 
 module Nidyx
   class Property
@@ -13,11 +16,11 @@ module Nidyx
       @name = name.camelize(false)
       @class_name = class_name
       @optional = optional
-      @enum = obj["enum"]
-      @type = process_type(obj["type"], @enum)
-      @description = obj["description"]
-      @properties = obj["properties"]
-      @collection_types = obj["collectionTypes"]
+      @enum = obj[ENUM_KEY]
+      @type = process_type(obj[TYPE_KEY], @enum)
+      @description = obj[DESCRIPTION_KEY]
+      @properties = obj[PROPERTIES_KEY]
+      @collection_types = obj[COLLECTION_TYPES_KEY]
     end
 
     def has_properties?

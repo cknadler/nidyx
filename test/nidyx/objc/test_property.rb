@@ -197,7 +197,7 @@ class TestObjCProperty < Minitest::Test
   def test_protocols
     obj = {
       "type" => "array",
-      "collectionTypes" => ["SomeModel", "OtherModel"]
+      COLLECTION_TYPES_KEY => ["SomeModel", "OtherModel"]
     }
 
     p = property(obj, false)

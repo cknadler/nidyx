@@ -1,9 +1,11 @@
 require "nidyx/common"
+require "nidyx/parse_constants"
 require "nidyx/property"
 require "nidyx/pointer"
 require "nidyx/model"
 
 include Nidyx::Common
+include Nidyx::ParseConstants
 
 module Nidyx
   module Parser
@@ -14,7 +16,7 @@ module Nidyx
     # @param model_prefix [String] the prefix for model names
     # @param schema [Hash] JSON Schema
     # @param options [Hash] global application options
-    # @return [Array] an array of ModelData objects
+    # @return [Hash] a Hash of ModelData objects
     def parse(model_prefix, schema, options)
       raise EmptySchemaError if empty_schema?(schema)
 
@@ -31,26 +33,14 @@ module Nidyx
 
     private
 
-    # Schema key definitions
-    REF              = "$ref"
-    TYPE             = "type"
-    REQUIRED         = "required"
-    PROPERTIES       = "properties"
-    CLASS_NAME       = "className"
-    OBJECT           = "object"
-    ARRAY            = "array"
-    ITEMS            = "items"
-    DERIVED_NAME     = "_name"
-    COLLECTION_TYPES = "collectionTypes"
-
     # Generates a Model and adds it to the models array.
     # @param path [Array] the path to an object in the schema
     # @param name [String] raw model name
     def generate(path, name)
       @models[name] = model = Nidyx::Model.new(name)
 
-      required_properties = get_object(path)[REQUIRED]
-      properties_path = path + [PROPERTIES]
+      required_properties = get_object(path)[REQUIRED_KEY]
+      properties_path = path + [PROPERTIES_KEY]
 
       get_object(properties_path).keys.each do |key|
         optional = is_optional?(key, required_properties)
@@ -67,11 +57,11 @@ module Nidyx
       obj = resolve_reference(path)
       class_name = obj[DERIVED_NAME]
 
-      if include_type?(obj, OBJECT) && obj[PROPERTIES]
+      if include_type?(obj, OBJECT_TYPE) && obj[PROPERTIES_KEY]
         model.dependencies << class_name
-      elsif include_type?(obj, ARRAY)
-        obj[COLLECTION_TYPES] = resolve_array_refs(obj)
-        model.dependencies += obj[COLLECTION_TYPES]
+      elsif include_type?(obj, ARRAY_TYPE)
+        obj[COLLECTION_TYPES_KEY] = resolve_array_refs(obj)
+        model.dependencies += obj[COLLECTION_TYPES_KEY]
       end
 
       Nidyx::Property.new(key, class_name, optional, obj)
@@ -96,7 +86,7 @@ module Nidyx
     # it's parents.
     def resolve_reference(path, parent = nil)
       obj = get_object(path)
-      ref = obj[REF]
+      ref = obj[REF_KEY]
 
       # TODO: merge parent and obj into obj (destructive)
 
@@ -106,7 +96,7 @@ module Nidyx
 
       # If we are dealing with an object, encode it's class name into the
       # schema and generate it's model if necessary.
-      if include_type?(obj, OBJECT) && obj[PROPERTIES]
+      if include_type?(obj, OBJECT_TYPE) && obj[PROPERTIES_KEY]
         obj[DERIVED_NAME] = class_name_from_path(@class_prefix, path, @schema)
         generate(path, obj[DERIVED_NAME]) unless @models.has_key?(obj[DERIVED_NAME])
       end
@@ -119,18 +109,18 @@ module Nidyx
     # @param obj [Hash] the array property schema
     # @return [Array] list of types in the array
     def resolve_array_refs(obj)
-      items = obj[ITEMS]
+      items = obj[ITEMS_KEY]
       types = []
 
       case items
       when Array
         items.each do |i|
-          resolve_reference_string(i[REF])
-          types << class_name_from_ref(i[REF])
+          resolve_reference_string(i[REF_KEY])
+          types << class_name_from_ref(i[REF_KEY])
         end
       when Hash
-        resolve_reference_string(items[REF])
-        types << class_name_from_ref(items[REF])
+        resolve_reference_string(items[REF_KEY])
+        types << class_name_from_ref(items[REF_KEY])
       end
 
       types.compact
@@ -151,7 +141,7 @@ module Nidyx
     # @param schema [Hash] an object containing JSON schema
     # @return [Boolean] true if the schema is empty
     def empty_schema?(schema)
-      props = schema[PROPERTIES]
+      props = schema[PROPERTIES_KEY]
       !props || props.empty?
     end
 
@@ -172,7 +162,7 @@ module Nidyx
     # @param type [String] a string type to test
     # @param true if the string type is a valid type according type object
     def include_type?(obj, type)
-      type_obj = obj[TYPE]
+      type_obj = obj[TYPE_KEY]
       type_obj.is_a?(Array) ? type_obj.include?(type) : type_obj == type
     end
   end
