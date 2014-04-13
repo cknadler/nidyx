@@ -11,8 +11,9 @@ module Nidyx
       begin
         # TODO: validate this is legitimate JSON Schema
         JSON.parse(IO.read(path))
-      rescue JSON::JSONError
-        puts "Invalid JSON read from #{path}"
+      rescue JSON::JSONError => e
+        puts "Encountered an error reading JSON from #{path}"
+        puts e.message
         exit 1
       rescue StandardError => e
         puts e.message
