@@ -45,7 +45,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  guard
   guard-minitest
   nidyx!
   ruby_gntp

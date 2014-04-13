@@ -16,7 +16,6 @@ spec = Gem::Specification.new do |s|
 
   s.add_dependency "mustache", "~> 0.99.5"
 
-  s.add_development_dependency "guard"
   s.add_development_dependency "ruby_gntp"
   s.add_development_dependency "guard-minitest"
 
