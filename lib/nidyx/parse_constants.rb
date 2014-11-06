@@ -11,8 +11,13 @@ module Nidyx
     DESCRIPTION_KEY      = "description"
     REQUIRED_KEY         = "required"
     PROPERTIES_KEY       = "properties"
-    CLASS_NAME_KEY       = "className"
+    NAME_OVERRIDE_KEY    = "nameOverride"
     ITEMS_KEY            = "items"
+
+    ###
+    # Internal schema key definitions
+    ###
+
     DERIVED_NAME         = "__derivedName"
     COLLECTION_TYPES_KEY = "__collectionTypes"
 

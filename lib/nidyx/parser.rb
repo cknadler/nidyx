@@ -60,7 +60,8 @@ module Nidyx
         model.dependencies += obj[COLLECTION_TYPES_KEY]
       end
 
-      Nidyx::Property.new(key, class_name, optional, obj)
+      property_name = obj[NAME_OVERRIDE_KEY] || key
+      Nidyx::Property.new(property_name, class_name, optional, obj)
     end
 
     # Given a path, which could be at any part of a reference chain, resolve

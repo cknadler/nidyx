@@ -17,13 +17,11 @@ class TestParser < Minitest::Test
 
     models = parse(schema)
     props = models["TSModel"].properties
-
     key = props.shift
     assert_equal("a description", key.description)
     assert_equal(:string, key.type)
     assert_equal("key", key.name)
     assert_equal(true, key.optional)
-
     value = props.shift
     assert_equal(:integer, value.type)
     assert_equal("value", value.name)
@@ -52,42 +50,32 @@ class TestParser < Minitest::Test
 
     models = parse(schema)
 
-    ###
     # root model
-    ###
     model = models["TSModel"]
     assert_deps(%w(TSValueModel), model)
     props = model.properties
-
     key = props.shift
     assert_equal("key", key.name)
     assert_equal(:string, key.type)
-
     value = props.shift
     assert_equal("value", value.name)
     assert_equal(:object, value.type)
     assert_equal("TSValueModel", value.class_name)
     assert_equal(true, value.has_properties?)
 
-    ###
     # value model
-    ###
     model = models["TSValueModel"]
     assert_deps(%w(TSValueObjModel), model)
     props = model.properties
-
     name = props.shift
     assert_equal("name", name.name)
     assert_equal(:string, name.type)
-
     obj = props.shift
     assert_equal("obj", obj.name)
     assert_equal(:object, obj.type)
     assert_equal("TSValueObjModel", obj.class_name)
 
-    ###
     # value obj model
-    ###
     data = models["TSValueObjModel"].properties.shift
     assert_equal("data", data.name)
     assert_equal(:string, data.type)
@@ -113,28 +101,21 @@ class TestParser < Minitest::Test
 
     models = parse(schema)
 
-    ###
     # root model
-    ###
     model = models["TSModel"]
     assert_deps(%w(TSObjModel), model)
     props = model.properties
-
     value = props.shift
     assert_equal("value", value.name)
     assert_equal(:object, value.type)
     assert_equal("TSObjModel", value.class_name)
 
-    ###
     # obj model
-    ###
     model = models["TSObjModel"]
     props = model.properties
-
     banner = props.shift
     assert_equal("banner", banner.name)
     assert_equal(:string, banner.type)
-
     count = props.shift
     assert_equal("count", count.name)
     assert_equal(:integer, count.type)
@@ -156,7 +137,6 @@ class TestParser < Minitest::Test
     model = models["TSModel"]
     assert_deps([], model)
     props = model.properties
-
     value1 = props.shift
     assert_equal(:string, value1.type)
     assert_equal("value1", value1.name)
@@ -181,26 +161,19 @@ class TestParser < Minitest::Test
 
     models = parse(schema)
 
-    ###
     # root model
-    ###
     model = models["TSModel"]
     assert_deps(%w(TSValue3Model), model)
     props = model.properties
-
     value1 = props.shift
     assert_equal("value1", value1.name)
     assert_equal(:object, value1.type)
     assert_equal("TSValue3Model", value1.class_name)
 
-    ###
     # mid ref
-    ###
     assert_equal(nil, models["TSValue2Model"]) # should never exist
 
-    ###
     # end ref
-    ###
     props = models["TSValue3Model"].properties
     value4 = props.shift
     assert_equal("value4", value4.name)
@@ -247,9 +220,7 @@ class TestParser < Minitest::Test
     models = parse(schema)
     assert_equal(3, models.size)
 
-    ###
     # root model
-    ###
     model = models["TSModel"]
     assert_deps(%w(TSObjectModel TSOtherObjectModel), model)
     props = model.properties
@@ -266,22 +237,16 @@ class TestParser < Minitest::Test
     assert_equal(:array, multi_object_array.type)
     assert_equal(%w(TSObjectModel TSOtherObjectModel), multi_object_array.collection_types)
 
-    ###
     # object model
-    ###
     model = models["TSObjectModel"]
     props = model.properties
-
     int_value = props.shift
     assert_equal(:integer, int_value.type)
     assert_equal("intValue", int_value.name)
 
-    ###
     # other object model
-    ###
     model = models["TSOtherObjectModel"]
     props = model.properties
-
     string_value = props.shift
     assert_equal(:string, string_value.type)
     assert_equal("stringValue", string_value.name)
@@ -353,7 +318,7 @@ class TestParser < Minitest::Test
       "properties" => {
         "value" => {
           "type" => "object",
-          "className" => "something",
+          "nameOverride" => "something",
           "properties" => {
             "name" => { "$ref" => "#/definitions/obj" }
           }
@@ -362,7 +327,7 @@ class TestParser < Minitest::Test
       "definitions" => {
         "obj" => {
           "type" => "object",
-          "className" => "somethingElse",
+          "nameOverride" => "somethingElse",
           "properties" => {
             "stars" => { "type" => "integer" }
           }
@@ -373,32 +338,43 @@ class TestParser < Minitest::Test
     models = parse(schema)
     assert_equal(3, models.size)
 
-    ###
     # root model
-    ###
     model = models["TSModel"]
     props = model.properties
-
     value = props.shift
     assert_equal("TSSomethingModel", value.class_name)
 
-    ###
     # something model
-    ###
     model = models["TSSomethingModel"]
     props = model.properties
-
     name = props.shift
     assert_equal("TSSomethingElseModel", name.class_name)
 
-    ###
     # something else model
-    ###
     model = models["TSSomethingElseModel"]
     props = model.properties
-
     stars = props.shift
     assert_equal(:integer, stars.type)
+  end
+
+  def test_property_name_override
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "name" => {
+          "type" => "string",
+          "nameOverride" => "otherName"
+        }
+      }
+    }
+
+    models = parse(schema)
+    assert_equal(1, models.size)
+    model = models["TSModel"]
+    props = model.properties
+    otherName = props.shift
+    assert_equal("otherName", otherName.name)
+    assert_equal(:string, otherName.type)
   end
 
   private

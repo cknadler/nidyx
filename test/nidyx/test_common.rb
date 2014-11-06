@@ -15,39 +15,48 @@ class TestCommon < Minitest::Test
     schema = {
       "type" => "object",
       "properties" => {
-        "obj" => {
-          "type" => "object",
-          "className" => "notObject",
-          "properties" => {
-            "value" => {
-              "type" => "object",
-              "properties" => {
-                "tang" => { "type" => "integer" }
-              }
-            }
-          }
-        }
+        "obj" => { "$ref" => "#/definitions/obj" }
       },
       "definitions" => {
         "obj" => {
+          "type" => "object",
           "properties" => {
-            "wu" => { "type" => "integer" }
+            "name" => { "type" => "string" }
           }
         }
       }
     }
 
-    path = ["properties", "obj", "properties", "value"]
-    assert_equal("DKObjValueModel", class_name_from_path("DK", path, schema))
     path = ["definitions", "obj"]
     assert_equal("DKObjModel", class_name_from_path("DK", path, schema))
-
-    # overriden
-    path = ["properties", "obj"]
-    assert_equal("DKNotObjectModel", class_name_from_path("DK", path, schema))
-
     # empty
     assert_equal("DKModel", class_name_from_path("DK", [], schema))
+  end
+
+  def test_class_name_from_path_overrides
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "obj" => {
+          "type" => "object",
+          "nameOverride" => "otherObject",
+          "properties" => {
+            "subObject" => {
+              "type" => "object",
+              "nameOverride" => "otherSubObject",
+              "properties" => {
+                "count" => { "type" => "integer" }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    path = ["properties", "obj"]
+    assert_equal("DKOtherObjectModel", class_name_from_path("DK", path, schema))
+    path = ["properties", "obj", "properties", "subObject"]
+    assert_equal("DKOtherObjectOtherSubObjectModel", class_name_from_path("DK", path, schema))
   end
 
   def test_object_at_path

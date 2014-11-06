@@ -14,11 +14,25 @@ module Nidyx
     end
 
     def class_name_from_path(prefix, path, schema)
-      override = object_at_path(path, schema)["className"]
-      return class_name(prefix, override) if override
+      override = object_at_path(path, schema)[NAME_OVERRIDE_KEY]
 
       name = ""
-      path.each { |p| name << p.camelize unless IGNORED_KEYS.include?(p) }
+      path.each_index do |idx|
+        # skip ignored keys such as "properties" in the name
+        next if IGNORED_KEYS.include?(path[idx])
+        # skip the last key if we are using an override
+        next if override && (idx == path.length - 1)
+
+        obj = object_at_path(path[0..idx], schema)
+        if obj[NAME_OVERRIDE_KEY]
+          name << obj[NAME_OVERRIDE_KEY].camelize
+        else
+          name << path[idx].camelize
+        end
+      end
+
+      # append the override name to the end if present
+      name << override.camelize if override
       class_name(prefix, name)
     end
 
