@@ -1,5 +1,16 @@
 {{> top_info}}
 {{> imports}}
 @implementation {{name}}
+{{#name_overrides?}}
+{{#json_model?}}
 
++ (JSONKeyMapper *)keyMapper
+{
+    return [[JSONKeyMapper alloc] initWithDictionary:@{
+        {{{name_override_string}}}
+    }];
+}
+
+{{/json_model?}}
+{{/name_overrides?}}
 @end

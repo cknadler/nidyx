@@ -17,7 +17,7 @@ module Nidyx
 
       models.each do |m|
         interface = map_interface(m, options)
-        implementation = Nidyx::ObjCImplementation.new(m.name, options)
+        implementation = map_implementation(m, options)
         objc_models << Nidyx::ObjCModel.new(interface, implementation)
       end
 
@@ -31,6 +31,14 @@ module Nidyx
       interface.properties = model.properties.map { |p| Nidyx::ObjCProperty.new(p) }
       interface.imports += model.dependencies.to_a
       interface
+    end
+
+    def map_implementation(model, options)
+      implementation = Nidyx::ObjCImplementation.new(model.name, options)
+      name_overrides = {}
+      model.properties.each { |p| name_overrides[p.overriden_name] = p.name if p.overriden_name }
+      implementation.name_overrides = name_overrides
+      implementation
     end
   end
 end

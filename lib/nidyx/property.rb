@@ -5,6 +5,7 @@ include Nidyx::ParseConstants
 
 module Nidyx
   class Property
+    attr_accessor :overriden_name
     attr_reader :name, :class_name, :optional, :type, :description, :enum,
       :collection_types
 
