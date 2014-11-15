@@ -50,7 +50,7 @@ options = {
   :comments => true,
   :platform => "objc",
   :objc => {
-    :json_model => false
+    :mapper => nil
   }
 }
 
@@ -81,8 +81,8 @@ opts = OptionParser.new do |o|
   # objc generation options
   ###
 
-  o.on("--json-model", "Generate with JSONModel support") do |j|
-    options[:objc][:json_model] = true
+  o.on("-m", "--mapper [MAPPER]", [:JSONModel, :Mantle], "Generate with JSONModel or Mantle support") do |m|
+    options[:objc][:mapper] = m.to_s if !m.nil?
   end
 
   ###
