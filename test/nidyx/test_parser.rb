@@ -377,6 +377,65 @@ class TestParser < Minitest::Test
     assert_equal(:string, otherName.type)
   end
 
+  def test_array_top_level_object
+    schema = {
+      "type" => "array",
+      "items" => { "$ref" => "#/definitions/object" },
+      "definitions" => {
+        "object" => {
+          "type" => "object",
+          "properties" => {
+            "text" => { "type" => "string" }
+          }
+        }
+      }
+    }
+
+    models = parse(schema)
+    assert_equal(1, models.size)
+    model = models["TSObjectModel"]
+    text = model.properties.shift
+    assert_equal("text", text.name)
+    assert_equal(:string, text.type)
+  end
+
+  def test_array_top_level_object_multiple_types
+    schema = {
+      "type" => "array",
+      "items" => [
+        { "$ref" => "#/definitions/object" },
+        { "$ref" => "#/definitions/otherObject" }
+      ],
+      "definitions" => {
+        "object" => {
+          "type" => "object",
+          "properties" => {
+            "text" => { "type" => "string" }
+          }
+        },
+        "otherObject" => {
+          "type" => "object",
+          "properties" => {
+            "bool" => { "type" => "boolean" }
+          }
+        }
+      }
+    }
+
+    models = parse(schema)
+    assert_equal(2, models.size)
+
+    model = models["TSObjectModel"]
+    text = model.properties.shift
+    assert_equal("text", text.name)
+    assert_equal(:string, text.type)
+
+    model = models["TSOtherObjectModel"]
+    bool = model.properties.shift
+    assert_equal("bool", bool.name)
+    assert_equal(:boolean, bool.type)
+  end
+
   private
 
   PREFIX = "TS"

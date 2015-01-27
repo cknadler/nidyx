@@ -11,6 +11,8 @@ module Nidyx
   module Parser
     extend self
 
+    class UnsupportedSchemaError < StandardError; end
+
     # @param model_prefix [String] the prefix for model names
     # @param schema [Hash] JSON Schema
     # @param options [Hash] global application options
@@ -33,8 +35,29 @@ module Nidyx
     # @param path [Array] the path to an object in the schema
     # @param name [String] raw model name
     def generate(path, name)
-      @models[name] = model = Nidyx::Model.new(name)
+      object = get_object(path)
 
+      type = object[TYPE_KEY]
+      if type == OBJECT_TYPE
+        generate_object(path, name)
+
+      elsif type == ARRAY_TYPE
+        generate_top_level_array(path)
+
+      elsif type.is_a?(Array)
+        if type.include?(OBJECT_TYPE)
+          raise UnsupportedSchemaError if type.include?(ARRAY_TYPE)
+          generate_object(path, name)
+
+        elsif type.include?(ARRAY_TYPE)
+          generate_top_leve_array(path)
+
+        else raise UnsupportedSchemaError; end
+      else raise UnsupportedSchemaError; end
+    end
+
+    def generate_object(path, name)
+      @models[name] = model = Nidyx::Model.new(name)
       required_properties = get_object(path)[REQUIRED_KEY]
       properties_path = path + [PROPERTIES_KEY]
 
@@ -43,6 +66,10 @@ module Nidyx
         property_path = properties_path + [key]
         model.properties << generate_property(key, property_path, model, optional)
       end
+    end
+
+    def generate_top_level_array(path)
+      resolve_array_refs(get_object(path))
     end
 
     # @param key [String] the key of the property in the JSON Schema
