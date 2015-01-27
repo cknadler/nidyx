@@ -329,14 +329,20 @@ class TestParser < Minitest::Test
           "type" => "object",
           "nameOverride" => "somethingElse",
           "properties" => {
-            "stars" => { "type" => "integer" }
+            "recObject" => { 
+              "type" => "object",
+              "nameOverride" => "rec",
+              "properties" => {
+                "value" => { "type" => "string" }
+              }
+            }
           }
         }
       }
     }
 
     models = parse(schema)
-    assert_equal(3, models.size)
+    assert_equal(4, models.size)
 
     # root model
     model = models["TSModel"]
@@ -352,9 +358,11 @@ class TestParser < Minitest::Test
 
     # something else model
     model = models["TSSomethingElseModel"]
-    props = model.properties
-    stars = props.shift
-    assert_equal(:integer, stars.type)
+    assert_equal("TSSomethingElseModel", model.name)
+
+    # rec model
+    model = models["TSRecModel"]
+    assert_equal("TSRecModel", model.name)
   end
 
   def test_property_name_override

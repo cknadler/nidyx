@@ -15,6 +15,7 @@ module Nidyx
 
     def class_name_from_path(prefix, path, schema)
       override = object_at_path(path, schema)[NAME_OVERRIDE_KEY]
+      return class_name(prefix, override.camelize) if override
 
       name = ""
       path.each_index do |idx|

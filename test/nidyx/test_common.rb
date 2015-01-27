@@ -56,7 +56,7 @@ class TestCommon < Minitest::Test
     path = ["properties", "obj"]
     assert_equal("DKOtherObjectModel", class_name_from_path("DK", path, schema))
     path = ["properties", "obj", "properties", "subObject"]
-    assert_equal("DKOtherObjectOtherSubObjectModel", class_name_from_path("DK", path, schema))
+    assert_equal("DKOtherSubObjectModel", class_name_from_path("DK", path, schema))
   end
 
   def test_object_at_path
