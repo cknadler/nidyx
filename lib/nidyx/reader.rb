@@ -38,7 +38,8 @@ module Nidyx
     # @return [Boolean] true if the schema is empty
     def empty_schema?(schema)
       props = schema[PROPERTIES_KEY]
-      !props || props.empty?
+      items = schema[ITEMS_KEY]
+      (!props || props.empty?) && (!items || items.empty?)
     end
   end
 end
