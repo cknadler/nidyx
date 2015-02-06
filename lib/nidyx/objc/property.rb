@@ -47,6 +47,7 @@ module Nidyx
       :array      => OBJECT_ATTRIBUTES,
       :boolean    => PRIMITIVE_ATTRIBUTES,
       :integer    => PRIMITIVE_ATTRIBUTES,
+      :unsigned   => PRIMITIVE_ATTRIBUTES,
       :number     => PRIMITIVE_ATTRIBUTES,
       :number_obj => OBJECT_ATTRIBUTES,
       :string     => OBJECT_ATTRIBUTES,
@@ -60,6 +61,7 @@ module Nidyx
       :array      => "NSArray",
       :boolean    => "BOOL",
       :integer    => "NSInteger",
+      :unsigned   => "NSUInteger",
       :number     => "double",
       :number_obj => "NSNumber",
       :string     => "NSString",
@@ -78,7 +80,7 @@ module Nidyx
 
     OBJECTS = Set.new [:array, :number_obj, :string, :object, :id]
 
-    SIMPLE_NUMBERS = Set.new [:integer, :number]
+    SIMPLE_NUMBERS = Set.new [:unsigned, :integer, :number]
 
     BOXABLE_NUMBERS = SIMPLE_NUMBERS + [:boolean]
 
@@ -118,13 +120,17 @@ module Nidyx
       process_array_type(types, property)
     end
 
-    # @param type [Symbol] a property type string
+    # @param type [Symbol] a property type symbol
     # @param property [Property] generic property
     # @return [Symbol] an obj-c property type
     def process_simple_type(type, property)
       case type
       when :boolean, :number, :integer
-        @optional ? :number_obj : type
+        return :number_obj if @optional
+        if type == :integer && property.minimum && property.minimum >= 0
+          return :unsigned
+        end
+        type
 
       when :null
         @optional = true

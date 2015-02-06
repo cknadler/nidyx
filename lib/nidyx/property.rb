@@ -7,7 +7,7 @@ module Nidyx
   class Property
     attr_accessor :overriden_name
     attr_reader :name, :class_name, :optional, :type, :description, :enum,
-      :collection_types
+      :collection_types, :minimum
 
     class UndefinedTypeError < StandardError; end
     class NonArrayEnumError < StandardError; end
@@ -22,6 +22,7 @@ module Nidyx
       @description = obj[DESCRIPTION_KEY]
       @properties = obj[PROPERTIES_KEY]
       @collection_types = obj[COLLECTION_TYPES_KEY]
+      @minimum = obj[MINIMUM_KEY]
     end
 
     def has_properties?
