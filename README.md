@@ -1,4 +1,4 @@
-# Nidyx
+# Nidyx ![Build Status](https://travis-ci.org/cknadler/nidyx.svg?branch=master)
 
 [JSON Schema][JSONSchema] &#8658; Model.
 
