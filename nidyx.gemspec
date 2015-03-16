@@ -14,8 +14,8 @@ spec = Gem::Specification.new do |s|
   s.description = "JSON Schema -> Objective-C model generator"
   s.license     = "MIT"
 
-  s.add_dependency "mustache", "~> 0.99.5"
-  s.add_dependency "rake"
+  s.add_runtime_dependency "mustache", "~> 0.99.5"
+  s.add_runtime_dependency "rake"
 
   s.add_development_dependency "ruby_gntp"
   s.add_development_dependency "guard-minitest"
@@ -23,7 +23,7 @@ spec = Gem::Specification.new do |s|
   s.bindir           = "bin"
   s.require_paths    = ["lib"]
   s.executables      = ["nidyx"]
-  s.files            = Dir["lib/**/*"]
+  s.files            = Dir["lib/**/*", "templates/**/*"]
   s.test_files       = Dir["test/**/test*"]
   s.extra_rdoc_files = ["README.md","LICENSE"]
 end
