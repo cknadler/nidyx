@@ -21,7 +21,11 @@ module Nidyx
       count = 0
       name_overrides.each do |original, override|
         count += 1
-        string += "@\"#{original}\": @\"#{override}\""
+        if (self.mapper == "JSONModel")
+          string += "        @\"#{original}\": @\"#{override}\""
+        elsif (self.mapper == "Mantle")
+          string += "        @\"#{override}\": @\"#{original}\""
+        end
         string += ",\n" unless count == name_overrides.length
       end
       string

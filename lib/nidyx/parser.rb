@@ -79,6 +79,7 @@ module Nidyx
     def generate_property(key, path, model, optional)
       obj = resolve_reference(path)
       class_name = obj[DERIVED_NAME]
+      mapper = @options[:objc][:mapper] if @options[:objc]
 
       if include_type?(obj, OBJECT_TYPE) && obj[PROPERTIES_KEY]
         model.dependencies << class_name
@@ -89,7 +90,12 @@ module Nidyx
 
       name = obj[NAME_OVERRIDE_KEY] || key
       property = Nidyx::Property.new(name, class_name, optional, obj)
-      property.overriden_name = key if obj[NAME_OVERRIDE_KEY]
+      if (mapper == "JSONModel")
+        property.overriden_name = key if obj[NAME_OVERRIDE_KEY]
+      elsif (mapper == "Mantle")
+        # The 2.0 release of Mantle will want all keys definied, even if they are not overriden.
+        property.overriden_name = key
+      end
       property
     end
 

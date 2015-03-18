@@ -7,10 +7,19 @@
 + (JSONKeyMapper *)keyMapper
 {
     return [[JSONKeyMapper alloc] initWithDictionary:@{
-        {{{name_override_string}}}
+{{{name_override_string}}}
     }];
 }
 
 {{/json_model?}}
+{{#mantle?}}
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey {
+    return @{
+{{{name_override_string}}}
+    };
+}
+
+{{/mantle?}}
 {{/name_overrides?}}
 @end

@@ -9,12 +9,11 @@ module Nidyx
     def initialize(name, options)
       super
       self.file_name = "#{name}.#{EXT}"
-      self.imports << JSON_MODEL_IMPORT if self.json_model
+      self.imports << self.mapper if self.mapper
     end
 
     private
     EXT = "h"
-    JSON_MODEL_IMPORT = "JSONModel"
 
   end
 end
