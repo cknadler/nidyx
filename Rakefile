@@ -14,3 +14,5 @@ task :examples do
     end
   end
 end
+
+task :default => :test
