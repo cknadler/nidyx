@@ -5,6 +5,12 @@
 Nidyx generates Objective-C models from JSON Schema. It can also generate
 models with [JSONModel](https://github.com/icanzilb/JSONModel) support.
 
+## Install
+
+```bash
+$ gem install nidyx
+```
+
 ## Usage
 
 ```
