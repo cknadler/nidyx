@@ -1,4 +1,4 @@
-# Nidyx [![Build Status](https://travis-ci.org/cknadler/nidyx.svg?branch=master)](https://travis-ci.org/cknadler/nidyx)
+# Nidyx [![Build Status](https://travis-ci.org/cknadler/nidyx.svg?branch=master)](https://travis-ci.org/cknadler/nidyx) [![Code Climate](https://codeclimate.com/github/cknadler/nidyx/badges/gpa.svg)](https://codeclimate.com/github/cknadler/nidyx)
 
 [JSON Schema][JSONSchema] &#8658; Model.
 
