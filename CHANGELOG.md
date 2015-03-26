@@ -1,3 +1,7 @@
+# 0.1.2, released 2015-03-26
+
+* Fixes bug with HTML encoded documentation being rendered in the model output
+
 # 0.1.1, released 2015-03-16
 
 * Fixes numerous bugs with different versions of ruby
