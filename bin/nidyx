@@ -57,10 +57,7 @@ options = {
 opts = OptionParser.new do |o|
   o.banner = BANNER
 
-  ###
   # general generation options
-  ###
-
   o.on("-a", "--author AUTHOR", "Author's name") do |a|
     options[:author] = a
   end
@@ -77,18 +74,12 @@ opts = OptionParser.new do |o|
     options[:comments] = false
   end
 
-  ###
   # objc generation options
-  ###
-
   o.on("--json-model", "Generate with JSONModel support") do |j|
     options[:objc][:json_model] = true
   end
 
-  ###
   # other
-  ###
-
   o.on("-h", "--help", "Print usage information") do
     puts o
     exit

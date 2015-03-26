@@ -18,9 +18,11 @@
       "type": "boolean"
     },
     "integer": {
+      "description": "this is a comment that will show up as documentation",
       "type": "integer"
     },
     "number": {
+      "description": "this is another comment with some 'special characters'",
       "type": "number"
     },
     "string": {
