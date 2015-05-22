@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 1.9.3"
 
   s.add_runtime_dependency "mustache", "~> 0.99.6"
+  s.add_runtime_dependency "rake"
 
-  s.add_development_dependency "rake"
   s.add_development_dependency "ruby_gntp"
   s.add_development_dependency "guard-minitest"
 
