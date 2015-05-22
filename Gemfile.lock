@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nidyx (0.1.2)
+    nidyx (0.2.0)
       mustache (~> 0.99.5)
       rake
 
