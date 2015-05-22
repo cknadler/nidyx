@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 require "nidyx/version"
 
-spec = Gem::Specification.new do |s|
+Gem::Specification.new do |s|
   s.name        = "nidyx"
   s.version     = Nidyx::VERSION
   s.platform    = Gem::Platform::RUBY
