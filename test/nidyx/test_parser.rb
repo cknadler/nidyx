@@ -446,8 +446,9 @@ class TestParser < Minitest::Test
 
   private
 
-  PREFIX = "TS"
-  OPTIONS = {}
+  OPTIONS = {
+    :class_prefix => "TS"
+  }
 
   def assert_deps(expected, model)
     actual = model.dependencies
@@ -455,6 +456,6 @@ class TestParser < Minitest::Test
   end
 
   def parse(schema)
-    Nidyx::Parser.parse(PREFIX, schema, OPTIONS)
+    Nidyx::Parser.parse(schema, OPTIONS)
   end
 end

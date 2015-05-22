@@ -1,3 +1,7 @@
+require "nidyx/parse_constants"
+
+include Nidyx::ParseConstants
+
 module Nidyx
   module Common
     class NoObjectAtPathError < StandardError; end
@@ -6,10 +10,12 @@ module Nidyx
     IGNORED_KEYS = "properties", "definitions"
 
     def class_name(prefix, key)
-      if key
+      if key && prefix
         prefix + key.camelize + CLASS_SUFFIX
-      else
+      elsif prefix
         prefix + CLASS_SUFFIX
+      else
+        CLASS_SUFFIX
       end
     end
 

@@ -40,7 +40,7 @@ class TestComparison < Minitest::Test
   def run_generate(example_name)
     cmd = "bundle exec nidyx " <<
           example_schema_path(example_name) <<
-          " #{PREFIX} -o #{TMP_PATH} -n --json-model"
+          " -x #{PREFIX} -o #{TMP_PATH} -n --json-model"
 
     assert(false) unless system(cmd)
   end

@@ -10,11 +10,10 @@ module Nidyx
     # The Nidyx model generator. Called by the Nidyx CLI. Parses the input
     # schema, creates models and writes them to the output directory.
     # @param schema_path [String] Path to the schema to generate models with.
-    # @param model_prefix [String] The model prefix.
     # @param options [Hash] Model generation options hash.
-    def run(schema_path, model_prefix, options)
+    def run(schema_path, options)
       schema = Nidyx::Reader.read(schema_path)
-      raw_models = Nidyx::Parser.parse(model_prefix, schema, options)
+      raw_models = Nidyx::Parser.parse(schema, options)
       models = Nidyx::Mapper.map(raw_models, options)
       Nidyx::Output.write(models, options[:output_directory])
     end

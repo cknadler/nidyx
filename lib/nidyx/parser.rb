@@ -13,13 +13,12 @@ module Nidyx
 
     class UnsupportedSchemaError < StandardError; end
 
-    # @param model_prefix [String] the prefix for model names
     # @param schema [Hash] JSON Schema
     # @param options [Hash] global application options
     # @return [Hash] a Hash of ModelData objects
-    def parse(model_prefix, schema, options)
+    def parse(schema, options)
       # setup parser
-      @class_prefix = model_prefix
+      @class_prefix = options[:class_prefix]
       @options = options
       @schema = schema
       @models = {}

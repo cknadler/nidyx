@@ -11,8 +11,8 @@ require "nidyx/generator"
 
 BANNER = <<END
 usage: nidyx [-h] [--version]
-       nidyx <schema> <class-prefix>
-             [-n] [-a author] [-c company] [-p project] [-o directory]
+       nidyx <schema> [-n] [-a author] [-c company] [-p project]
+             [-o directory] [-x prefix]
              [--json-model] # objc specific
 
 END
@@ -25,19 +25,17 @@ models with JSONModel support.
 Examples
 ========
 
-Bare minimum. Given a schema and a class prefix, generate models in the
-current directory:
+Generate models for a given schema.
 
-  $ nidyx example.json.schema ClassPrefix
+  $ nidyx example.json.schema
 
-Specify an ouput directory:
+Specify an ouput directory and a class prefix:
 
-  $ nidyx example.json.schema ClassPrefix -o /path/to/output/directory
+  $ nidyx example.json.schema -x ClassPrefix -o /path/to/output/directory
 
-Generate models with JSONModel support and optional documentation:
+Generate with JSONModel support and optional documentation:
 
-  $ nidyx example.json.schema ClassPrefix -o /path/to/output/directory \\
-    --json-model -a "Your Name" -c "Company Name" -p "Project Name"
+  $ nidyx example.json.schema --json-model -a "Your Name" -p "Project Name"
 
 END
 
@@ -70,6 +68,9 @@ opts = OptionParser.new do |o|
   o.on("-o", "--output DIRECTORY", "Output models to a specific directory") do |output_directory|
     options[:output_directory] = output_directory
   end
+  o.on("-x", "--class-prefix PREFIX", "Add a prefix to generated model names") do |prefix|
+    options[:class_prefix] = prefix
+  end
   o.on("-n", "--no-comments", "Generate without header comments") do
     options[:comments] = false
   end
@@ -100,7 +101,7 @@ rescue OptionParser::InvalidOption => e
   exit 1
 end
 
-if ARGV.size < 2
+if ARGV.size < 1
   puts "Too few arguments." unless ARGV.empty?
   puts opts
   exit 1
@@ -110,4 +111,4 @@ end
 # run
 ###
 
-Nidyx::Generator.run(ARGV[0], ARGV[1], options)
+Nidyx::Generator.run(ARGV[0], options)

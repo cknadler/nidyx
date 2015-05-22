@@ -1,2 +1,2 @@
 #!/bin/sh
-bundle exec nidyx complex_properties.json.schema Example --json-model -n
+bundle exec nidyx complex_properties.json.schema -x Example --json-model -n

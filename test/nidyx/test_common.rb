@@ -9,6 +9,7 @@ class TestCommon < Minitest::Test
     assert_equal("DKResponseModel", class_name("DK", "response"))
     assert_equal("DKModel", class_name("DK", nil))
     assert_equal("DKLargeButtonModel", class_name("DK", "large_button"))
+    assert_equal("Model", class_name(nil, nil))
   end
 
   def test_class_name_from_path
