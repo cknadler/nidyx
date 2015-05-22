@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     nidyx (0.2.0)
-      mustache (~> 0.99.5)
+      mustache (~> 0.99.6)
       rake
 
 GEM
