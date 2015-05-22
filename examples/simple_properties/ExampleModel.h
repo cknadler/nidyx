@@ -5,7 +5,6 @@
 @end
 
 @interface ExampleModel : JSONModel
-
 @property (strong, nonatomic) NSArray *array;
 @property (assign, nonatomic) BOOL boolean;
 // this is a comment that will show up as documentation
@@ -14,5 +13,4 @@
 @property (assign, nonatomic) double number;
 @property (strong, nonatomic) NSString *string;
 @property (strong, nonatomic) ExampleObjectModel *object;
-
 @end

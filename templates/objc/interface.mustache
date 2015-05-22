@@ -6,12 +6,10 @@
 
 {{/json_model?}}
 @interface {{name}}{{#json_model?}} : JSONModel{{/json_model?}}
-
 {{#properties}}
 {{#desc}}
 // {{{desc}}}
 {{/desc}}
 @property ({{attributes}}{{getter_override}}) {{type_name}}{{#json_model?}}{{#has_protocols?}}<{{protocols_string}}>{{/has_protocols?}}{{/json_model?}} {{#is_obj?}}*{{/is_obj?}}{{name}};
 {{/properties}}
-
 @end
