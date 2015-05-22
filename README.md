@@ -15,14 +15,16 @@ $ gem install nidyx
 
 ```
 usage: nidyx [-h] [--version]
-       nidyx <schema> <class-prefix> [output-directory]
-             [-j] [-n] [-a author] [-c company] [-p project]
+       nidyx <schema> <class-prefix>
+             [-n] [-a author] [-c company] [-p project] [-o directory]
+             [--json-model] # objc specific
 
     -a, --author AUTHOR              Author's name
     -c, --company COMPANY            Company's name
     -p, --project PROJECT            Project's name
-    -j, --json-model                 Generate with JSONModel support
+    -o, --output DIRECTORY           Output models to a specific directory
     -n, --no-comments                Generate without header comments
+        --json-model                 Generate with JSONModel support
     -h, --help                       Print usage information
         --version                    Print version
 
@@ -39,13 +41,12 @@ current directory:
 
 Specify an ouput directory:
 
-  $ nidyx example.json.schema ClassPrefix /path/to/output/directory
+  $ nidyx example.json.schema ClassPrefix -o /path/to/output/directory
 
-Generate models with JSONModel support and all optional documentation:
+Generate models with JSONModel support and optional documentation:
 
-  $ nidyx example.json.schema ClassPrefix /path/to/output/directory \
-    -j -a "Your Name" -c "Company Name" -p "Project Name"
-
+  $ nidyx example.json.schema ClassPrefix -o /path/to/output/directory \
+    --json-model -a "Your Name" -c "Company Name" -p "Project Name"
 ```
 
 ## Features
