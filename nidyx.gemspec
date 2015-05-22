@@ -6,17 +6,18 @@ require "nidyx/version"
 Gem::Specification.new do |s|
   s.name        = "nidyx"
   s.version     = Nidyx::VERSION
-  s.platform    = Gem::Platform::RUBY
   s.authors     = ["Chris Knadler"]
   s.email       = "takeshi91k@gmail.com"
   s.homepage    = "https://github.com/cknadler/nidyx"
-  s.summary     = "Nidyx"
-  s.description = "JSON Schema -> Objective-C model generator"
+  s.summary     = "JSON Schema -> Objective-C models"
+  s.description = "Nidyx generates Objective-C models from JSONSchema files. Use your API's spec to make your client's models in a snap."
   s.license     = "MIT"
 
-  s.add_runtime_dependency "mustache", "~> 0.99.5"
-  s.add_runtime_dependency "rake"
+  s.required_ruby_version = ">= 1.9.3"
 
+  s.add_runtime_dependency "mustache", "~> 0.99.6"
+
+  s.add_development_dependency "rake"
   s.add_development_dependency "ruby_gntp"
   s.add_development_dependency "guard-minitest"
 
