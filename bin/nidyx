@@ -37,7 +37,7 @@ Specify an ouput directory:
 Generate models with JSONModel support and optional documentation:
 
   $ nidyx example.json.schema ClassPrefix -o /path/to/output/directory \\
-    -j -a "Your Name" -c "Company Name" -p "Project Name"
+    --json-model -a "Your Name" -c "Company Name" -p "Project Name"
 
 END
 
