@@ -11,8 +11,8 @@ require "nidyx/generator"
 
 BANNER = <<END
 usage: nidyx [-h] [--version]
-       nidyx <schema> <class-prefix> [output-directory]
-             [-n] [-a author] [-c company] [-p project]
+       nidyx <schema> <class-prefix>
+             [-n] [-a author] [-c company] [-p project] [-o directory]
              [--json-model] # objc specific
 
 END
@@ -32,11 +32,11 @@ current directory:
 
 Specify an ouput directory:
 
-  $ nidyx example.json.schema ClassPrefix /path/to/output/directory
+  $ nidyx example.json.schema ClassPrefix -o /path/to/output/directory
 
-Generate models with JSONModel support and all optional documentation:
+Generate models with JSONModel support and optional documentation:
 
-  $ nidyx example.json.schema ClassPrefix /path/to/output/directory \\
+  $ nidyx example.json.schema ClassPrefix -o /path/to/output/directory \\
     -j -a "Your Name" -c "Company Name" -p "Project Name"
 
 END
@@ -58,24 +58,24 @@ opts = OptionParser.new do |o|
   o.banner = BANNER
 
   # general generation options
-  o.on("-a", "--author AUTHOR", "Author's name") do |a|
-    options[:author] = a
+  o.on("-a", "--author AUTHOR", "Author's name") do |author|
+    options[:author] = author
   end
-
-  o.on("-c", "--company COMPANY", "Company's name") do |c|
-    options[:company] = c
+  o.on("-c", "--company COMPANY", "Company's name") do |company|
+    options[:company] = company
   end
-
-  o.on("-p", "--project PROJECT", "Project's name") do |p|
-    options[:project] = p
+  o.on("-p", "--project PROJECT", "Project's name") do |project|
+    options[:project] = project
   end
-
-  o.on("-n", "--no-comments", "Generate without header comments") do |n|
+  o.on("-o", "--output DIRECTORY", "Output models to a specific directory") do |output_directory|
+    options[:output_directory] = output_directory
+  end
+  o.on("-n", "--no-comments", "Generate without header comments") do
     options[:comments] = false
   end
 
   # objc generation options
-  o.on("--json-model", "Generate with JSONModel support") do |j|
+  o.on("--json-model", "Generate with JSONModel support") do
     options[:objc][:json_model] = true
   end
 
@@ -84,7 +84,6 @@ opts = OptionParser.new do |o|
     puts o
     exit
   end
-
   o.on("--version", "Print version") do
     puts Nidyx::VERSION
     exit
@@ -106,8 +105,6 @@ if ARGV.size < 2
   puts opts
   exit 1
 end
-
-options[:output_path] = ARGV[2]
 
 ###
 # run
