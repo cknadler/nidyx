@@ -1,4 +1,4 @@
-# Nidyx [![Gem Version](https://img.shields.io/gem/v/nidyx.svg)](https://rubygems.org/gems/nidyx) [![Build Status](https://travis-ci.org/cknadler/nidyx.svg?branch=master)](https://travis-ci.org/cknadler/nidyx) [![Code Climate](https://codeclimate.com/github/cknadler/nidyx/badges/gpa.svg)](https://codeclimate.com/github/cknadler/nidyx)
+# Nidyx [![Gem Version](https://img.shields.io/gem/v/nidyx.svg)](https://rubygems.org/gems/nidyx) [![Build Status](https://travis-ci.org/cknadler/nidyx.svg?branch=master)](https://travis-ci.org/cknadler/nidyx) [![Code Climate](https://codeclimate.com/github/cknadler/nidyx/badges/gpa.svg)](https://codeclimate.com/github/cknadler/nidyx) [![Documentation](https://inch-ci.org/github/cknadler/nidyx.svg?branch=master)](https://inch-ci.org/github/cknadler/nidyx)
 
 [JSON Schema][JSONSchema] &#8658; Model.
 
