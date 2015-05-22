@@ -1,10 +1,10 @@
-# run all tests
+desc "run all tests"
 task :test do
   $LOAD_PATH.unshift('lib', 'test')
   Dir.glob('./test/**/test_*.rb') { |f| require f }
 end
 
-# generates examples
+desc "generates examples"
 task :examples do
   dirs = Dir.entries("examples").reject { |f| !File.directory?("examples/#{f}") }
   dirs.each do |example_dir|
