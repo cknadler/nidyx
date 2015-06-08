@@ -50,3 +50,6 @@ DEPENDENCIES
   guard-minitest
   nidyx!
   ruby_gntp
+
+BUNDLED WITH
+   1.10.2
