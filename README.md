@@ -16,13 +16,15 @@ $ gem install nidyx
 ```
 usage: nidyx [-h] [--version]
        nidyx <schema> <class-prefix>
-             [-n] [-a author] [-c company] [-p project] [-o directory]
+             [-n] [-a author] [-c company] [-p project]
+             [-o directory] [-x prefix]
              [--json-model] # objc specific
 
     -a, --author AUTHOR              Author's name
     -c, --company COMPANY            Company's name
     -p, --project PROJECT            Project's name
     -o, --output DIRECTORY           Output models to a specific directory
+    -x, --class-prefix PREFIX        Add a prefix to generated model names
     -n, --no-comments                Generate without header comments
         --json-model                 Generate with JSONModel support
     -h, --help                       Print usage information
