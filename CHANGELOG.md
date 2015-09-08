@@ -1,3 +1,7 @@
+# 0.2.1, released 2015-09-08
+
+* Adds support for "anyOf" within array objects
+
 # 0.2.0, released 2015-05-22
 
 * Cleans up generated model formatting
