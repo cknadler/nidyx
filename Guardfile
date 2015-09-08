@@ -1,5 +1,3 @@
-notification :gntp
-
 guard :minitest do
   # Minitest::Unit
   watch(%r{^test/(.*)\/?test_(.*)\.rb})

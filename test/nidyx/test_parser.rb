@@ -329,7 +329,7 @@ class TestParser < Minitest::Test
           "type" => "object",
           "nameOverride" => "somethingElse",
           "properties" => {
-            "recObject" => { 
+            "recObject" => {
               "type" => "object",
               "nameOverride" => "rec",
               "properties" => {
@@ -353,8 +353,8 @@ class TestParser < Minitest::Test
     # something model
     model = models["TSSomethingModel"]
     props = model.properties
-    name = props.shift
-    assert_equal("TSSomethingElseModel", name.class_name)
+    value = props.shift
+    assert_equal("TSSomethingElseModel", value.class_name)
 
     # something else model
     model = models["TSSomethingElseModel"]
@@ -442,6 +442,66 @@ class TestParser < Minitest::Test
     bool = model.properties.shift
     assert_equal("bool", bool.name)
     assert_equal(:boolean, bool.type)
+  end
+
+  def test_any_of_array
+    schema = {
+      "type" => "object",
+      "properties" => {
+        "widgets" => {
+          "type" => "array",
+          "items" => {
+            "anyOf" => [
+              { "$ref" => "#/definitions/object" },
+              { "$ref" => "#/definitions/otherObject" }
+            ]
+          }
+        }
+      },
+      "definitions" => {
+        "object" => {
+          "type" => "object",
+          "properties" => {
+            "count" => { "type" => "integer" }
+          }
+        },
+        "otherObject" => {
+          "type" => "object",
+          "properties" => {
+            "lastObject" => { "$ref" => "#/definitions/lastObject" }
+          }
+        },
+        "lastObject" => {
+          "type" => "object",
+          "properties" => {
+            "limit" => { "type" => "integer" }
+          }
+        }
+      }
+    }
+
+    models = parse(schema)
+    assert_equal(4, models.size)
+
+    # root model
+    props = models["TSModel"].properties
+    value = props.shift
+    assert_equal(:array, value.type)
+
+    # object model
+    props = models["TSObjectModel"].properties
+    value = props.shift
+    assert_equal(:integer, value.type)
+
+    # other object model
+    props = models["TSOtherObjectModel"].properties
+    value = props.shift
+    assert_equal("TSLastObjectModel", value.class_name)
+
+    # last object model
+    props = models["TSLastObjectModel"].properties
+    value = props.shift
+    assert_equal(:integer, value.type)
   end
 
   private

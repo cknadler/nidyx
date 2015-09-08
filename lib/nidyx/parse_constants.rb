@@ -13,6 +13,7 @@ module Nidyx
     NAME_OVERRIDE_KEY    = "nameOverride"
     ITEMS_KEY            = "items"
     MINIMUM_KEY          = "minimum"
+    ANY_OF_KEY           = "anyOf"
 
     ###
     # Internal schema key definitions

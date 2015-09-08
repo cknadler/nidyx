@@ -129,28 +129,40 @@ module Nidyx
       obj
     end
 
-    # Resolves any references burried in the `items` property of an array
+    # Resolves any references buied in the `items` property of an array
     # definition. Returns a list of collection types in the array.
     # @param obj [Hash] the array property schema
-    # @return [Array] list of types in the array
+    # @return [Array] types contained in the array
     def resolve_array_refs(obj)
       items = obj[ITEMS_KEY]
-      types = []
-
       case items
       when Array
-        items.each do |i|
-          resolve_reference_string(i[REF_KEY])
-          types << class_name_from_ref(i[REF_KEY])
-        end
+        return resolve_items_array(items)
       when Hash
-        resolve_reference_string(items[REF_KEY])
-        types << class_name_from_ref(items[REF_KEY])
-      end
+        # handle a nested any of key
+        any_of = items[ANY_OF_KEY]
+        return resolve_items_array(any_of) if any_of.is_a?(Array)
 
+        resolve_reference_string(items[REF_KEY])
+        return [class_name_from_ref(items[REF_KEY])].compact
+      else
+        return []
+      end
+    end
+
+    # @param items [Array] an array of items
+    # @return [Array] types contained in the array
+    def resolve_items_array(items)
+      types = []
+      items.each do |item|
+        resolve_reference_string(item[REF_KEY])
+        types << class_name_from_ref(item[REF_KEY])
+      end
       types.compact
     end
 
+    # @param ref [String] reference in json pointer format
+    # @return [String] the class name of the object at the location of the ref
     def class_name_from_ref(ref)
       class_name_from_path(@class_prefix, Nidyx::Pointer.new(ref).path, @schema) if ref
     end
