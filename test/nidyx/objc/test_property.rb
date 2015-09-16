@@ -1,7 +1,10 @@
 require "minitest/autorun"
 require "nidyx"
+require "nidyx/parse_constants"
 require "nidyx/property"
 require "nidyx/objc/property"
+
+include Nidyx::ParseConstants
 
 class TestObjCProperty < Minitest::Test
 
@@ -19,7 +22,7 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_simple_array
-    obj = { "type" => "array" }
+    obj = { TYPE_KEY => "array" }
     p = property(obj, false)
     assert_equal(:array, p.type)
     assert_equal(nil, p.getter_override)
@@ -34,14 +37,21 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_typed_optional_array
-    obj = { "type" => ["array", "null"] }
+    obj = { TYPE_KEY => ["array", "null"] }
     p = property(obj, false)
     assert_equal(:array, p.type)
     assert_equal(["Optional"], p.protocols)
   end
 
+  def test_typed_array_with_protocls
+    obj = { TYPE_KEY => ["array" ], COLLECTION_TYPES_KEY => ["aClass", "string"]  }
+    p = property(obj, false)
+    assert_equal(:array, p.type)
+    assert_equal(["aClass"], p.protocols)
+  end
+
   def test_boolean
-    obj = { "type" => "boolean" }
+    obj = { TYPE_KEY => "boolean" }
     p = property(obj, false)
     assert_equal(:boolean, p.type)
 
@@ -51,13 +61,13 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_typed_optional_boolean
-    obj = { "type" => ["boolean", "null"] }
+    obj = { TYPE_KEY => ["boolean", "null"] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
   end
 
   def test_integer
-    obj = { "type" => "integer" }
+    obj = { TYPE_KEY => "integer" }
     p = property(obj, false)
     assert_equal(:integer, p.type)
 
@@ -67,20 +77,20 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_unsigned_integer
-    obj = { "type" => "integer", "minimum" => 0 }
+    obj = { TYPE_KEY => "integer", "minimum" => 0 }
     p = property(obj, false)
     assert_equal(:unsigned, p.type)
   end
 
   def test_typed_optional_integer
-    obj = { "type" => ["integer", "null"] }
+    obj = { TYPE_KEY => ["integer", "null"] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
     assert_equal(["Optional"], p.protocols)
   end
 
   def test_number
-    obj = { "type" => "number" }
+    obj = { TYPE_KEY => "number" }
     p = property(obj, false)
     assert_equal(:number, p.type)
 
@@ -89,13 +99,13 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_typed_optional_number
-    obj = { "type" => ["number", "null"] }
+    obj = { TYPE_KEY => ["number", "null"] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
   end
 
   def test_string
-    obj = { "type" => "string" }
+    obj = { TYPE_KEY => "string" }
     p = property(obj, false)
     assert_equal(:string, p.type)
 
@@ -104,15 +114,15 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_typed_optional_string
-    obj = { "type" => ["string", "null"] }
+    obj = { TYPE_KEY => ["string", "null"] }
     p = property(obj, false)
     assert_equal(:string, p.type)
   end
 
   def test_object
     obj = {
-      "type" => "object",
-      "properties" => {}
+      TYPE_KEY => "object",
+      PROPERTIES_KEY => {}
     }
 
     p = property(obj, false)
@@ -120,32 +130,32 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_multiple_numeric_types
-    obj = { "type" => ["number", "integer", "boolean"] }
+    obj = { TYPE_KEY => ["number", "integer", "boolean"] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
   end
 
   def test_typed_optional_multiple_numeric_types
-    obj = { "type" => ["number", "integer", "boolean", "null"] }
+    obj = { TYPE_KEY => ["number", "integer", "boolean", "null"] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
     assert_equal(["Optional"], p.protocols)
   end
 
   def test_multiple_disparate_types
-    obj = { "type" => ["object", "number"] }
+    obj = { TYPE_KEY => ["object", "number"] }
     p = property(obj, false)
     assert_equal(:id, p.type)
   end
 
   def test_typed_optional_multiple_disparate_types
-    obj = { "type" => ["object", "number", "null"] }
+    obj = { TYPE_KEY => ["object", "number", "null"] }
     p = property(obj, false)
     assert_equal(:id, p.type)
   end
 
   def test_simple_numbers
-    obj = { "type" => [ "integer", "number" ] }
+    obj = { TYPE_KEY => [ "integer", "number" ] }
     p = property(obj, false)
     assert_equal(:number, p.type)
 
@@ -154,13 +164,13 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_typed_optional_simple_numbers
-    obj = { "type" => [ "integer", "number", "null" ] }
+    obj = { TYPE_KEY => [ "integer", "number", "null" ] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
   end
 
   def test_integer_enum
-    obj = { "enum" => [1, 2] }
+    obj = { ENUM_KEY => [1, 2] }
     p = property(obj, false)
     assert_equal(:integer, p.type)
 
@@ -170,39 +180,39 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_string_enum
-    obj = { "enum" => ["a", "b"] }
+    obj = { ENUM_KEY => ["a", "b"] }
     p = property(obj, false)
     assert_equal(:string, p.type)
   end
 
   def test_typed_optional_enum
-    obj = { "enum" => [1, 2, nil] }
+    obj = { ENUM_KEY => [1, 2, nil] }
     p = property(obj, false)
     assert_equal(:number_obj, p.type)
     assert_equal(["Optional"], p.protocols)
   end
 
   def test_single_element_array_type
-    obj = { "type" => ["integer"] }
+    obj = { TYPE_KEY => ["integer"] }
     p = property(obj, false)
     assert_equal(:integer, p.type)
   end
 
   def test_anonymous_object
-    obj = { "type" => "object" }
+    obj = { TYPE_KEY => "object" }
     p = property(obj, false)
     assert_equal(:id, p.type)
   end
 
   def test_unsafe_getter
-    obj = { "type" => "integer" }
+    obj = { TYPE_KEY => "integer" }
     p = Nidyx::ObjCProperty.new(Nidyx::Property.new("newInt", nil, false, obj))
     assert_equal(", getter=getNewInt", p.getter_override)
   end
 
   def test_protocols
     obj = {
-      "type" => "array",
+      TYPE_KEY => "array",
       COLLECTION_TYPES_KEY => ["SomeModel", "OtherModel"]
     }
 
@@ -218,8 +228,8 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_unsupported_types_enum
-    assert_raises(Nidyx::ObjCProperty::UnsupportedEnumTypeError) do
-      obj = { "enum" => ["a", {}] }
+    assert_raises(Nidyx::ObjCUtils::UnsupportedEnumTypeError) do
+      obj = { ENUM_KEY => ["a", {}] }
       Nidyx::ObjCProperty.new(Nidyx::Property.new("i", nil, false, obj))
     end
   end
@@ -227,7 +237,7 @@ class TestObjCProperty < Minitest::Test
   private
 
   def simple_property(type)
-    obj = { "type" => type }
+    obj = { TYPE_KEY => type }
     Nidyx::ObjCProperty.new(Nidyx::Property.new("p", nil, false, obj))
   end
 

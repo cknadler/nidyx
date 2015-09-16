@@ -135,6 +135,7 @@ module Nidyx
     # @return [Array] types contained in the array
     def resolve_array_refs(obj)
       items = obj[ITEMS_KEY]
+
       case items
       when Array
         return resolve_items_array(items)
@@ -154,11 +155,22 @@ module Nidyx
     # @return [Array] types contained in the array
     def resolve_items_array(items)
       types = []
-      items.each do |item|
-        resolve_reference_string(item[REF_KEY])
-        types << class_name_from_ref(item[REF_KEY])
+      items.each do |i|
+        types << resolve_single_item(i)
       end
+
       types.compact
+    end
+
+    # @param item (Hash) a single item
+    # return (Array) types for the single item
+    def resolve_single_item(item)
+      if item[REF_KEY]
+        resolve_reference_string(item[REF_KEY])
+        class_name_from_ref(item[REF_KEY])
+      elsif item[TYPE_KEY]
+        item[TYPE_KEY]
+      end
     end
 
     # @param ref [String] reference in json pointer format

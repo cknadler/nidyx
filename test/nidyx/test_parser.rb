@@ -197,6 +197,7 @@ class TestParser < Minitest::Test
           "items" => [
             { "$ref" => "#/definitions/object" },
             { "$ref" => "#/definitions/other_object" }
+            { "type" => "string" }
           ]
         }
       },
@@ -222,7 +223,7 @@ class TestParser < Minitest::Test
 
     # root model
     model = models["TSModel"]
-    assert_deps(%w(TSObjectModel TSOtherObjectModel), model)
+    assert_deps(%w(TSObjectModel TSOtherObjectModel string), model)
     props = model.properties
 
     string_array = props.shift

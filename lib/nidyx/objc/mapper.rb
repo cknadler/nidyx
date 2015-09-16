@@ -3,6 +3,9 @@ require "nidyx/objc/model"
 require "nidyx/objc/interface"
 require "nidyx/objc/implementation"
 require "nidyx/objc/property"
+require "nidyx/objc/utils"
+
+include Nidyx::ObjCUtils
 
 module Nidyx
   module ObjCMapper
@@ -29,7 +32,7 @@ module Nidyx
     def map_interface(model, options)
       interface = Nidyx::ObjCInterface.new(model.name, options)
       interface.properties = model.properties.map { |p| Nidyx::ObjCProperty.new(p) }
-      interface.imports += model.dependencies.to_a
+      interface.imports += filter_primitives(model.dependencies.to_a)
       interface
     end
 
