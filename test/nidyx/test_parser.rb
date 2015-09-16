@@ -196,7 +196,7 @@ class TestParser < Minitest::Test
           "type" => "array",
           "items" => [
             { "$ref" => "#/definitions/object" },
-            { "$ref" => "#/definitions/other_object" }
+            { "$ref" => "#/definitions/other_object" },
             { "type" => "string" }
           ]
         }
@@ -236,7 +236,7 @@ class TestParser < Minitest::Test
 
     multi_object_array = props.shift
     assert_equal(:array, multi_object_array.type)
-    assert_equal(%w(TSObjectModel TSOtherObjectModel), multi_object_array.collection_types)
+    assert_equal(%w(TSObjectModel TSOtherObjectModel string), multi_object_array.collection_types)
 
     # object model
     model = models["TSObjectModel"]
