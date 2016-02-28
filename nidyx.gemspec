@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.description = "Nidyx generates Objective-C models from JSONSchema files. Use your API's spec to make your client's models in a snap."
   s.license     = "MIT"
 
-  s.required_ruby_version = ">= 1.9.3"
+  s.required_ruby_version = ">= 2.0.0"
 
-  s.add_runtime_dependency "mustache", "~> 0.99.6"
+  s.add_runtime_dependency "mustache", "~> 1.0.2"
   s.add_runtime_dependency "rake"
 
   s.add_development_dependency "minitest"
