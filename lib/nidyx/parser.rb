@@ -155,15 +155,12 @@ module Nidyx
     # @return [Array] types contained in the array
     def resolve_items_array(items)
       types = []
-      items.each do |i|
-        types << resolve_single_item(i)
-      end
-
+      items.each { |i| types << resolve_single_item(i) }
       types.compact
     end
 
-    # @param item (Hash) a single item
-    # return (Array) types for the single item
+    # @param item [Hash] a single item
+    # return [Array] types for the single item
     def resolve_single_item(item)
       if item[REF_KEY]
         resolve_reference_string(item[REF_KEY])

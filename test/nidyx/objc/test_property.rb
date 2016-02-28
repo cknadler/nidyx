@@ -228,7 +228,7 @@ class TestObjCProperty < Minitest::Test
   end
 
   def test_unsupported_types_enum
-    assert_raises(Nidyx::ObjCUtils::UnsupportedEnumTypeError) do
+    assert_raises(Nidyx::ObjCProperty::UnsupportedEnumTypeError) do
       obj = { ENUM_KEY => ["a", {}] }
       Nidyx::ObjCProperty.new(Nidyx::Property.new("i", nil, false, obj))
     end

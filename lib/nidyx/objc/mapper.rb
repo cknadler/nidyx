@@ -3,19 +3,15 @@ require "nidyx/objc/model"
 require "nidyx/objc/interface"
 require "nidyx/objc/implementation"
 require "nidyx/objc/property"
-require "nidyx/objc/utils"
-
-include Nidyx::ObjCUtils
 
 module Nidyx
   module ObjCMapper
-    extend self
 
     # Generates a list of ObjCModels
     # @param models [Array] an array of generic Models to map
     # @param options [Hash] runtime options
     # @return [Array] a list of ObjCModels
-    def map(models, options)
+    def self.map(models, options)
       objc_models = []
 
       models.each do |m|
@@ -29,14 +25,14 @@ module Nidyx
 
     private
 
-    def map_interface(model, options)
+    def self.map_interface(model, options)
       interface = Nidyx::ObjCInterface.new(model.name, options)
       interface.properties = model.properties.map { |p| Nidyx::ObjCProperty.new(p) }
-      interface.imports += filter_primitives(model.dependencies.to_a)
+      interface.imports += Nidyx::ObjCUtils.filter_standard_types(model.dependencies.to_a)
       interface
     end
 
-    def map_implementation(model, options)
+    def self.map_implementation(model, options)
       implementation = Nidyx::ObjCImplementation.new(model.name, options)
       name_overrides = {}
       model.properties.each { |p| name_overrides[p.overriden_name] = p.name if p.overriden_name }
