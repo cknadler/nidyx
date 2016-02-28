@@ -8,6 +8,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    minitest (5.8.3)
     mustache (0.99.8)
     rake (10.5.0)
 
@@ -15,6 +16,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  minitest
   nidyx!
 
 BUNDLED WITH
