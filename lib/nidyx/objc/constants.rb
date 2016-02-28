@@ -1,8 +1,8 @@
 module Nidyx
   module ObjCConstants
 
-    PRIMITIVE_ATTRIBUTES = "assign, nonatomic"
-    OBJECT_ATTRIBUTES = "strong, nonatomic"
+    PRIMITIVE_ATTRIBUTES = "assign, nonatomic".freeze
+    OBJECT_ATTRIBUTES = "strong, nonatomic".freeze
 
     ATTRIBUTES = {
       :array      => OBJECT_ATTRIBUTES,
@@ -14,7 +14,7 @@ module Nidyx
       :string     => OBJECT_ATTRIBUTES,
       :object     => OBJECT_ATTRIBUTES,
       :id         => OBJECT_ATTRIBUTES
-    }
+    }.freeze
 
     # Objective-C types
     # :object intentionally omitted
@@ -27,7 +27,7 @@ module Nidyx
       :number_obj => "NSNumber",
       :string     => "NSString",
       :id         => "id"
-    }
+    }.freeze
 
     # Hash and Array intentionally omitted
     ENUM_TYPES = {
@@ -37,14 +37,14 @@ module Nidyx
       Float      => :number,
       TrueClass  => :boolean,
       FalseClass => :boolean
-    }
+    }.freeze
 
-    OBJECTS = Set.new [:array, :number_obj, :string, :object, :id]
+    OBJECTS = Set.new [:array, :number_obj, :string, :object, :id].freeze
 
-    SIMPLE_NUMBERS = Set.new [:unsigned, :integer, :number]
+    SIMPLE_NUMBERS = Set.new [:unsigned, :integer, :number].freeze
 
-    BOXABLE_NUMBERS = SIMPLE_NUMBERS + [:boolean]
+    BOXABLE_NUMBERS = SIMPLE_NUMBERS + [:boolean].freeze
 
-    FORBIDDEN_PROPERTY_PREFIXES = ["new", "copy"]
+    FORBIDDEN_PROPERTY_PREFIXES = ["new", "copy"].freeze
   end
 end
