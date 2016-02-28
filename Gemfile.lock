@@ -1,14 +1,13 @@
 PATH
   remote: .
   specs:
-    nidyx (0.2.1)
-      mustache (~> 1.0.2)
-      rake
+    nidyx (0.2.2)
+      mustache (~> 1.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    minitest (5.8.3)
+    minitest (5.8.4)
     mustache (1.0.2)
     rake (10.5.0)
 
@@ -16,8 +15,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  minitest
+  minitest (~> 5.8)
   nidyx!
+  rake (~> 10.5)
 
 BUNDLED WITH
    1.11.2

@@ -15,10 +15,10 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.0.0"
 
-  s.add_runtime_dependency "mustache", "~> 1.0.2"
-  s.add_runtime_dependency "rake"
+  s.add_runtime_dependency "mustache", "~> 1.0"
 
-  s.add_development_dependency "minitest"
+  s.add_development_dependency "rake", "~> 10.5"
+  s.add_development_dependency "minitest", "~> 5.8"
 
   s.bindir           = "bin"
   s.require_paths    = ["lib"]

@@ -1,3 +1,7 @@
+# 0.2.2, released 2016-02-28
+
+* Adds support for raw types in arrays
+
 # 0.2.1, released 2015-09-08
 
 * Adds support for "anyOf" within array objects
