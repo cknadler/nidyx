@@ -1,6 +1,6 @@
 # Nidyx [![Gem Version](https://badge.fury.io/rb/nidyx.svg)](http://badge.fury.io/rb/nidyx) [![Build Status](https://travis-ci.org/cknadler/nidyx.svg?branch=master)](https://travis-ci.org/cknadler/nidyx) [![Code Climate](https://codeclimate.com/github/cknadler/nidyx/badges/gpa.svg)](https://codeclimate.com/github/cknadler/nidyx) [![Documentation](https://inch-ci.org/github/cknadler/nidyx.svg?branch=master)](https://inch-ci.org/github/cknadler/nidyx)
 
-[JSON Schema][JSONSchema] &#8658; Model.
+[JSON Schema][JSONSchema] &#8658; Model
 
 Nidyx generates Objective-C models from JSON Schema. It can also generate
 models with [JSONModel](https://github.com/icanzilb/JSONModel) support.
