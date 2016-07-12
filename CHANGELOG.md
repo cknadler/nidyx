@@ -1,3 +1,8 @@
+# 0.2.3, release 2016-07-12
+
+* Moves from includes to forward declarations for classes and protocols (where
+  possible) to resolve circular dependency issues
+
 # 0.2.2, released 2016-02-28
 
 * Adds support for raw types in arrays
