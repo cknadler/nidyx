@@ -28,7 +28,9 @@ module Nidyx
     def self.map_interface(model, options)
       interface = Nidyx::ObjCInterface.new(model.name, options)
       interface.properties = model.properties.map { |p| Nidyx::ObjCProperty.new(p) }
-      interface.imports += Nidyx::ObjCUtils.filter_standard_types(model.dependencies.to_a)
+      dependencies = Nidyx::ObjCUtils.filter_standard_types(model.dependencies.to_a)
+      interface.class_forward_declarations += dependencies
+      interface.protocol_forward_declarations += dependencies
       interface
     end
 

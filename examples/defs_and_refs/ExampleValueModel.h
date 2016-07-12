@@ -1,10 +1,12 @@
 #import "JSONModel.h"
-#import "ExampleValueObjModel.h"
-#import "ExampleObjModel.h"
-#import "ExampleOtherObjectModel.h"
 
-@protocol ExampleValueModel
-@end
+@class ExampleValueObjModel;
+@class ExampleObjModel;
+@class ExampleOtherObjectModel;
+@protocol ExampleValueObjModel;
+@protocol ExampleObjModel;
+@protocol ExampleOtherObjectModel;
+@protocol ExampleValueModel; @end
 
 @interface ExampleValueModel : JSONModel
 @property (strong, nonatomic) NSString *name;

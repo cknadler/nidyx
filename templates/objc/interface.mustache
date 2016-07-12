@@ -1,10 +1,9 @@
 {{> top_info}}
 {{> imports}}
-{{#json_model?}}
-@protocol {{name}}
-@end
+{{> class_forward_declarations}}
+{{> protocol_forward_declarations}}
+{{> protocol_declarations}}
 
-{{/json_model?}}
 @interface {{name}}{{#json_model?}} : JSONModel{{/json_model?}}
 {{#properties}}
 {{#desc}}
