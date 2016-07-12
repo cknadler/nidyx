@@ -1,3 +1,7 @@
+# 0.2.4, release 2016-07-12
+
+* Fix issue with protocol declarations
+
 # 0.2.3, release 2016-07-12
 
 * Moves from includes to forward declarations for classes and protocols (where
