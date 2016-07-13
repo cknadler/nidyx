@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nidyx (0.2.3)
+    nidyx (0.2.4)
       mustache (~> 1.0)
 
 GEM
