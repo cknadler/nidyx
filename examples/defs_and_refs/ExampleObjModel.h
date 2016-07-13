@@ -1,6 +1,6 @@
 #import "JSONModel.h"
 
-@protocol ExampleObjModel; @end
+@protocol ExampleObjModel @end
 
 @interface ExampleObjModel : JSONModel
 @property (assign, nonatomic) double size;

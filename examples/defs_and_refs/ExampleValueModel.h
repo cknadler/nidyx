@@ -6,7 +6,7 @@
 @protocol ExampleValueObjModel;
 @protocol ExampleObjModel;
 @protocol ExampleOtherObjectModel;
-@protocol ExampleValueModel; @end
+@protocol ExampleValueModel @end
 
 @interface ExampleValueModel : JSONModel
 @property (strong, nonatomic) NSString *name;

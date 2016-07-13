@@ -2,7 +2,7 @@
 
 @class ExampleValueModel;
 @protocol ExampleValueModel;
-@protocol ExampleModel; @end
+@protocol ExampleModel @end
 
 @interface ExampleModel : JSONModel
 @property (strong, nonatomic) NSString *key;

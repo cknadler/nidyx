@@ -2,7 +2,7 @@
 
 @class ExampleObjModel;
 @protocol ExampleObjModel;
-@protocol ExampleValueObjModel; @end
+@protocol ExampleValueObjModel @end
 
 @interface ExampleValueObjModel : JSONModel
 @property (strong, nonatomic) NSString<Optional> *tag;
